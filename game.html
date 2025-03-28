@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/game.css">
+    <script src="assets/js/game.js" defer></script>
+    <title>Qual é o Segredo? - Jogo</title>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <p id="timer">Tempo: 00:00</p>
+            <p id="rule">Regra: Elimine números com base nas pistas.</p>
+            <button class="btn" onclick="nextRound()">Próximo Round</button>
+        </div>
+
+        <div class="board" id="board"></div>
+
+        <p id="alert" class="alert"></p>
+
+        <div id="final-step" class="final-step hidden">
+            <label>Menor número: <input type="text" id="first"></label>
+            <label>Maior número: <input type="text" id="second"></label>
+            <button class="btn" onclick="checkFinalNumbers()">Confirmar</button>
+        </div>
+
+        <div id="end-game" class="end-game hidden">
+            <p>Descubra o segredo!</p>
+            <div id="final-hints"></div>
+            <label>Qual é o segredo? <input type="text" id="secret"></label>
+            <button class="btn" onclick="finishGame()">Confirmar</button>
+        </div>
+    </div>
+</body>
+</html>

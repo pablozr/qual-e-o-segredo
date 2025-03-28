@@ -1,0 +1,86 @@
+@font-face {
+    font-family: 'Albertsthal Typewriter';
+    src: url('../fonts/AlbertsthalTypewriter.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    background-image: url('../images/fundo.png');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Albertsthal Typewriter', monospace;
+    color: #fff;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    text-align: center;
+    animation: fadeIn 1s ease-in;
+}
+
+h1 {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px #000;
+    color: #00daff;
+    animation: bounce 1s ease infinite alternate;
+}
+
+.fireworks {
+    width: 200px;
+    margin: 20px 0;
+    animation: pulse 1.5s ease infinite;
+}
+
+p {
+    font-size: 1.5rem;
+    max-width: 600px;
+    margin: 20px 0;
+}
+
+.btn {
+    padding: 15px 30px;
+    font-size: 1.5rem;
+    background: linear-gradient(45deg, #00daff, #007bff);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s;
+}
+
+.btn:hover {
+    background: linear-gradient(45deg, #00a5c1, #0056b3);
+    transform: scale(1.05);
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
