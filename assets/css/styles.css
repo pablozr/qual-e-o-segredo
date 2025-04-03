@@ -78,12 +78,14 @@ body {
     opacity: 0;
     pointer-events: none;
     transform: translateY(20px);
+    visibility: hidden; /* Adicionado para garantir que o container fique invisível */
 }
 
 .container.active {
     opacity: 1;
     pointer-events: all;
     transform: translateY(0);
+    visibility: visible; /* Adicionado para garantir que o container fique visível */
 }
 
 .container.hidden {

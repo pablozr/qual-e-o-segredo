@@ -354,6 +354,18 @@ function nextRound() {
             return false;
         }
 
+        // Mostrar os números restantes no painel final
+        const remainingNumbersContainer = document.getElementById('remaining-numbers-final');
+        remainingNumbersContainer.innerHTML = '';
+
+        numerosRestantes.forEach(btn => {
+            const numero = btn.textContent;
+            const numeroElement = document.createElement('div');
+            numeroElement.className = 'remaining-number';
+            numeroElement.textContent = numero;
+            remainingNumbersContainer.appendChild(numeroElement);
+        });
+
         document.getElementById('final-step').classList.remove('hidden');
         document.getElementById('rule').textContent = "Última etapa!";
         return true;
@@ -364,8 +376,25 @@ function nextRound() {
 }
 
 function checkFinalNumbers(){
+  // Obter os números restantes antes de esconder o painel
+  const numerosRestantes = document.querySelectorAll('#board button:not(.marked):not(:disabled)');
+
   document.getElementById('final-step').classList.add('hidden');
   document.getElementById('end-game').classList.remove('hidden');
+
+  // Mostrar os números restantes no painel de dicas finais
+  const remainingNumbersContainer = document.getElementById('remaining-numbers-end');
+  remainingNumbersContainer.innerHTML = '';
+
+  numerosRestantes.forEach(btn => {
+    const numero = btn.textContent;
+    const numeroElement = document.createElement('div');
+    numeroElement.className = 'remaining-number';
+    numeroElement.textContent = numero;
+    remainingNumbersContainer.appendChild(numeroElement);
+  });
+
+  // Mostrar as dicas finais
   const hints=document.getElementById('final-hints');
   hints.innerHTML='';
   currentTabuleiro.dicasFinais.forEach(d=>hints.innerHTML+=`<p>${d}</p>`);

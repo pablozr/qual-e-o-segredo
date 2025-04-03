@@ -1,5 +1,9 @@
 // Garantir que a tela inicial seja exibida corretamente quando a página carregar
 document.addEventListener('DOMContentLoaded', function() {
+    // Esconder a tela de história inicialmente
+    const storyScreen = document.getElementById('story');
+    storyScreen.classList.add('hidden');
+
     // Mostrar a tela inicial
     setTimeout(function() {
         document.getElementById('intro').classList.add('active');
@@ -24,6 +28,7 @@ function startGame() {
     introScreen.classList.remove('active');
     introScreen.style.opacity = '0';
     introScreen.style.transform = 'translateY(-20px)';
+    introScreen.style.visibility = 'hidden';
 
     // Mostrar a tela de história após um pequeno delay
     setTimeout(function() {
@@ -34,6 +39,7 @@ function startGame() {
         // Pequeno delay para garantir que a animação funcione
         setTimeout(function() {
             storyScreen.classList.add('active');
+            storyScreen.style.visibility = 'visible';
         }, 50);
     }, 500);
 }

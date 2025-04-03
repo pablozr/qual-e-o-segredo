@@ -245,7 +245,7 @@ button.pulse {
     flex-direction: column;
     align-items: center;
     padding: 30px;
-    background: var(--card-bg);
+    background: rgba(45, 52, 54, 0.9); /* Fundo mais transparente */
     backdrop-filter: blur(10px);
     border-radius: 20px;
     border: 1px solid var(--glass-border);
@@ -253,6 +253,8 @@ button.pulse {
     z-index: 100;
     width: 90%;
     max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 .hidden {
@@ -344,6 +346,64 @@ label i {
     background: var(--glass-bg);
     border-radius: 6px;
     border-left: 3px solid var(--accent-color);
+}
+
+/* Estilo para os números restantes */
+.remaining-numbers {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 15px 0;
+    width: 100%;
+}
+
+.remaining-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    height: 90px;
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: 'Roboto Mono', monospace;
+    background: linear-gradient(135deg, var(--accent-color), var(--accent-dark));
+    color: var(--text-light);
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: pulse 2s infinite;
+    position: relative;
+}
+
+.remaining-number::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--secondary-light), var(--primary-light));
+    z-index: -1;
+    opacity: 0.6;
+    animation: rotateBorder 3s linear infinite;
+}
+
+@keyframes rotateBorder {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.remaining-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--secondary-light);
+    margin: 10px 0;
+    text-align: center;
+}
+
+.remaining-title i {
+    color: var(--warning-color);
+    margin: 0 8px;
 }
 
 /* Animations */
