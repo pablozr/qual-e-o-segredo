@@ -3,6 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/game.css">
     <script src="assets/js/game.js" defer></script>
     <title>Qual é o Segredo? - Jogo</title>
@@ -10,27 +19,152 @@
 <body>
     <div class="game-container">
         <div class="header">
-            <p id="timer">Tempo: 00:00</p>
-            <p id="rule">Regra: Elimine números com base nas pistas.</p>
-            <button class="btn" onclick="nextRound()">Próximo Round</button>
+            <div class="header-left">
+                <div class="timer-container">
+                    <i class="fas fa-clock"></i>
+                    <p id="timer" class="animate__animated animate__fadeIn">00:00</p>
+                </div>
+            </div>
+
+            <div class="header-center">
+                <div class="rule-container animate__animated animate__fadeIn">
+                    <i class="fas fa-lightbulb"></i>
+                    <p id="rule">Regra: Elimine números com base nas pistas.</p>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <button class="btn next-btn animate__animated animate__pulse animate__infinite" onclick="nextRound()">
+                    <span>Próxima Pista</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
         </div>
 
-        <div class="board" id="board"></div>
-
-        <p id="alert" class="alert"></p>
-
-        <div id="final-step" class="final-step hidden">
-            <label>Menor número: <input type="text" id="first"></label>
-            <label>Maior número: <input type="text" id="second"></label>
-            <button class="btn" onclick="checkFinalNumbers()">Confirmar</button>
+        <div class="board-container">
+            <div class="board" id="board"></div>
         </div>
 
-        <div id="end-game" class="end-game hidden">
-            <p>Descubra o segredo!</p>
-            <div id="final-hints"></div>
-            <label>Qual é o segredo? <input type="text" id="secret"></label>
-            <button class="btn" onclick="finishGame()">Confirmar</button>
+        <div id="alert" class="alert animate__animated"></div>
+
+        <div id="final-step" class="final-step hidden animate__animated animate__fadeIn">
+            <h2><i class="fas fa-check-circle"></i> Última Etapa</h2>
+            <div class="input-group">
+                <label for="first">
+                    <i class="fas fa-sort-numeric-down"></i>
+                    Menor número:
+                </label>
+                <input type="text" id="first" class="modern-input">
+            </div>
+            <div class="input-group">
+                <label for="second">
+                    <i class="fas fa-sort-numeric-up"></i>
+                    Maior número:
+                </label>
+                <input type="text" id="second" class="modern-input">
+            </div>
+            <button class="btn confirm-btn" onclick="checkFinalNumbers()">
+                <i class="fas fa-check"></i>
+                Confirmar
+            </button>
+        </div>
+
+        <div id="end-game" class="end-game hidden animate__animated animate__fadeIn">
+            <h2><i class="fas fa-key"></i> Descubra o segredo!</h2>
+            <div id="final-hints" class="final-hints"></div>
+            <div class="input-group">
+                <label for="secret">
+                    <i class="fas fa-lock-open"></i>
+                    Qual é o segredo?
+                </label>
+                <input type="text" id="secret" class="modern-input">
+            </div>
+            <button class="btn confirm-btn" onclick="finishGame()">
+                <i class="fas fa-unlock"></i>
+                Confirmar
+            </button>
         </div>
     </div>
+
+    <!-- Partículas de fundo -->
+    <div id="particles-js"></div>
+
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            particlesJS("particles-js", {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#ffffff"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                    },
+                    "opacity": {
+                        "value": 0.3,
+                        "random": false,
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true,
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#ffffff",
+                        "opacity": 0.2,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 2,
+                        "direction": "none",
+                        "random": false,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                    }
+                },
+                "retina_detect": true
+            });
+        });
+    </script>
 </body>
 </html>

@@ -3,15 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/end.css">
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+            // Recuperar o tempo final do localStorage
+            const tempoFinal = localStorage.getItem('tempoFinal');
+            if (tempoFinal) {
+                const minutos = Math.floor(tempoFinal / 60);
+                const segundos = tempoFinal % 60;
+                document.getElementById('tempo-final').textContent =
+                    `${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+            }
+
+            // Iniciar confetes
+            startConfetti();
+        });
+
+        function startConfetti() {
+            const duration = 15 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                // since particles fall down, start a bit higher than random
+                confetti(Object.assign({}, defaults, {
+                    particleCount,
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+                }));
+                confetti(Object.assign({}, defaults, {
+                    particleCount,
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+                }));
+            }, 250);
+        }
+    </script>
     <title>Qual é o Segredo? - Vitória</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Parabéns!</h1>
-        <img src="https://cliply.co/wp-content/uploads/2021/09/CLIPLY_372109170_FREE_FIREWORKS_400.gif" alt="Fogos">
-        <p>Você descobriu o segredo e venceu os bandidos!</p>
-        <a href="https://forms.gle/kKuqwbQuispMfR3t6" class="btn">Formulário</a>
+    <div id="particles-js"></div>
+
+    <div class="container animate__animated animate__fadeIn">
+        <div class="victory-card">
+            <h1 class="animate__animated animate__bounceIn"><i class="fas fa-trophy"></i> Parabéns!</h1>
+
+            <div class="fireworks-container">
+                <img src="https://cliply.co/wp-content/uploads/2021/09/CLIPLY_372109170_FREE_FIREWORKS_400.gif" alt="Fogos" class="fireworks">
+            </div>
+
+            <p class="message animate__animated animate__fadeIn animate__delay-1s">Você descobriu o segredo e venceu os bandidos!</p>
+
+            <div class="time-container animate__animated animate__fadeIn animate__delay-2s">
+                <i class="fas fa-stopwatch"></i>
+                <div class="time-display">
+                    <span class="time-label">Seu tempo</span>
+                    <span id="tempo-final" class="tempo">00:00</span>
+                </div>
+            </div>
+
+            <a href="https://forms.gle/kKuqwbQuispMfR3t6" class="btn animate__animated animate__pulse animate__infinite">
+                <i class="fas fa-clipboard-list"></i>
+                Formulário
+            </a>
+
+            <a href="index.html" class="home-btn">
+                <i class="fas fa-home"></i>
+                Voltar ao Início
+            </a>
+        </div>
     </div>
+
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <!-- Confetti.js -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            particlesJS("particles-js", {
+                "particles": {
+                    "number": {
+                        "value": 80,
+                        "density": {
+                            "enable": true,
+                            "value_area": 800
+                        }
+                    },
+                    "color": {
+                        "value": "#ffffff"
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        },
+                    },
+                    "opacity": {
+                        "value": 0.3,
+                        "random": false,
+                    },
+                    "size": {
+                        "value": 3,
+                        "random": true,
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#ffffff",
+                        "opacity": 0.2,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 2,
+                        "direction": "none",
+                        "random": false,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "grab"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 140,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                    }
+                },
+                "retina_detect": true
+            });
+        });
+    </script>
 </body>
 </html>

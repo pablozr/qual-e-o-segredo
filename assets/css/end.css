@@ -1,18 +1,52 @@
-@font-face {
-    font-family: 'Albertsthal Typewriter';
-    src: url('../fonts/AlbertsthalTypewriter.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
+:root {
+    --primary-color: #6c5ce7;
+    --primary-light: #a29bfe;
+    --primary-dark: #5641e5;
+    --secondary-color: #00cec9;
+    --secondary-light: #81ecec;
+    --secondary-dark: #00b5b1;
+    --accent-color: #fd79a8;
+    --accent-light: #fab1c9;
+    --accent-dark: #e84393;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --error-color: #d63031;
+    --background-dark: #2d3436;
+    --background-light: #636e72;
+    --text-light: #dfe6e9;
+    --text-dark: #2d3436;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-shadow: rgba(0, 0, 0, 0.1);
+    --card-bg: rgba(45, 52, 54, 0.8);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    background-image: url('../images/fundo.png');
+    background: linear-gradient(135deg, var(--background-dark), #000);
     background-size: cover;
     background-position: center;
+    background-attachment: fixed;
     min-height: 100vh;
     margin: 0;
-    font-family: 'Albertsthal Typewriter', monospace;
-    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--text-light);
+    overflow-x: hidden;
+}
+
+/* Particles.js container */
+#particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
 }
 
 .container {
@@ -22,50 +56,143 @@ body {
     justify-content: center;
     min-height: 100vh;
     padding: 20px;
-    background: rgba(0, 0, 0, 0.5);
     text-align: center;
-    animation: fadeIn 1s ease-in;
+    z-index: 1;
+}
+
+.victory-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    padding: 40px;
+    max-width: 600px;
+    width: 90%;
 }
 
 h1 {
-    font-size: 4rem;
-    margin-bottom: 20px;
-    text-shadow: 2px 2px 4px #000;
-    color: #00daff;
-    animation: bounce 1s ease infinite alternate;
+    font-size: 3.5rem;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    color: var(--secondary-light);
+    font-weight: 700;
+}
+
+h1 i {
+    color: var(--warning-color);
+    margin-right: 15px;
+}
+
+.fireworks-container {
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
 }
 
 .fireworks {
     width: 200px;
-    margin: 20px 0;
-    animation: pulse 1.5s ease infinite;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-p {
+.message {
     font-size: 1.5rem;
-    max-width: 600px;
-    margin: 20px 0;
+    max-width: 500px;
+    margin: 25px auto;
+    line-height: 1.5;
+    color: var(--text-light);
+}
+
+.time-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin: 30px 0;
+    padding: 15px 25px;
+    background: var(--glass-bg);
+    border-radius: 50px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.time-container i {
+    font-size: 2rem;
+    color: var(--accent-color);
+}
+
+.time-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.time-label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    color: var(--text-light);
+    opacity: 0.8;
+}
+
+.tempo {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--secondary-light);
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     padding: 15px 30px;
-    font-size: 1.5rem;
-    background: linear-gradient(45deg, #00daff, #007bff);
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
     border: none;
-    border-radius: 10px;
-    color: #fff;
+    border-radius: 50px;
+    color: var(--text-light);
     text-decoration: none;
     cursor: pointer;
-    transition: transform 0.2s, background 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    margin: 15px 0;
 }
 
 .btn:hover {
-    background: linear-gradient(45deg, #00a5c1, #0056b3);
-    transform: scale(1.05);
+    background: linear-gradient(45deg, var(--primary-dark), var(--primary-color));
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .btn:active {
-    transform: scale(0.95);
+    transform: translateY(1px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+.home-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 25px;
+    font-size: 1rem;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 50px;
+    color: var(--text-light);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+}
+
+.home-btn:hover {
+    background: var(--glass-border);
+    transform: translateY(-2px);
 }
 
 /* Animações */
@@ -81,6 +208,65 @@ p {
 
 @keyframes pulse {
     0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+    50% { transform: scale(1.05); }
     100% { transform: scale(1); }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .victory-card {
+        padding: 30px 20px;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    .message {
+        font-size: 1.2rem;
+    }
+
+    .tempo {
+        font-size: 2rem;
+    }
+
+    .btn {
+        padding: 12px 25px;
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .victory-card {
+        padding: 25px 15px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .fireworks {
+        width: 150px;
+    }
+
+    .message {
+        font-size: 1.1rem;
+    }
+
+    .time-container {
+        padding: 10px 20px;
+    }
+
+    .time-container i {
+        font-size: 1.5rem;
+    }
+
+    .tempo {
+        font-size: 1.8rem;
+    }
+
+    .btn, .home-btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
 }

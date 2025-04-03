@@ -1,56 +1,191 @@
-@font-face {
-    font-family: 'Albertsthal Typewriter';
-    src: url('../fonts/AlbertsthalTypewriter.woff2') format('woff2');
-    font-weight: normal;
-    font-style: normal;
+:root {
+    --primary-color: #6c5ce7;
+    --primary-light: #a29bfe;
+    --primary-dark: #5641e5;
+    --secondary-color: #00cec9;
+    --secondary-light: #81ecec;
+    --secondary-dark: #00b5b1;
+    --accent-color: #fd79a8;
+    --accent-light: #fab1c9;
+    --accent-dark: #e84393;
+    --background-dark: #2d3436;
+    --background-light: #636e72;
+    --text-light: #dfe6e9;
+    --text-dark: #2d3436;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --error-color: #d63031;
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-shadow: rgba(0, 0, 0, 0.1);
+    --card-bg: rgba(45, 52, 54, 0.8);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    background-image: url('../images/fundo.png');
+    background: linear-gradient(135deg, var(--background-dark), #000);
     background-size: cover;
     background-position: center;
+    background-attachment: fixed;
     min-height: 100vh;
     margin: 0;
-    font-family: 'Albertsthal Typewriter', monospace;
-    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--text-light);
+    overflow-x: hidden;
+}
+
+/* Particles.js container */
+#particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -1;
 }
 
 .game-container {
+    position: relative;
     padding: 20px;
-    background: rgba(0, 0, 0, 0.6);
     min-height: 100vh;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
 }
 
+/* Header Styles */
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px var(--glass-shadow);
 }
 
-.header p {
+.header-left, .header-center, .header-right {
+    display: flex;
+    align-items: center;
+}
+
+.timer-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--primary-dark);
+    padding: 10px 20px;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.timer-container i {
     font-size: 1.5rem;
+    color: var(--secondary-light);
+}
+
+#timer {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 1.8rem;
+    font-weight: 600;
     margin: 0;
+    color: var(--text-light);
+}
+
+.rule-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: var(--glass-bg);
+    padding: 15px 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+}
+
+.rule-container i {
+    font-size: 1.8rem;
+    color: var(--accent-color);
+}
+
+#rule {
+    font-size: 1.2rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.next-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: linear-gradient(45deg, var(--primary-color), var(--primary-dark));
+    border: none;
+    border-radius: 50px;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.next-btn:hover {
+    background: linear-gradient(45deg, var(--primary-dark), var(--primary-color));
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.next-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Board Styles */
+.board-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
 }
 
 .board {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
+    gap: 15px;
     padding: 20px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px var(--glass-shadow);
+    max-width: 1000px;
+    width: 100%;
 }
 
 .column {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
 }
 
 button {
-    width: 50px;
-    height: 50px;
-    font-size: 1rem;
-    background: #00daff;
+    width: 60px;
+    height: 60px;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--secondary-color), var(--secondary-light));
+    color: var(--text-dark);
     border: none;
     border-radius: 50%;
     cursor: pointer;
@@ -58,78 +193,160 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 button.marked {
-    background: #ff6eff;
+    background: linear-gradient(135deg, var(--accent-dark), var(--accent-color));
+    color: var(--text-light);
     text-decoration: line-through;
-    opacity: 0.7;
+    opacity: 0.8;
     transform: scale(0.95);
 }
 
-button:hover {
-    background: #00a5c1;
+button:hover:not(.marked):not(:disabled) {
+    background: linear-gradient(135deg, var(--secondary-light), var(--secondary-color));
     transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+button:active:not(.marked):not(:disabled) {
+    transform: scale(0.95);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 button.pulse {
     animation: pulse 0.3s ease;
 }
 
-.btn {
-    padding: 15px 30px;
-    font-size: 1.5rem;
-    background: linear-gradient(45deg, #00daff, #007bff);
-    border: none;
-    border-radius: 10px;
-    color: #fff;
-    cursor: pointer;
-    transition: transform 0.2s, background 0.3s;
-}
-
-.btn:hover {
-    background: linear-gradient(45deg, #00a5c1, #0056b3);
-    transform: scale(1.05);
-}
-
-.btn:active {
-    transform: scale(0.95);
-}
-
+/* Alert Styles */
 .alert {
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     margin: 20px 0;
+    padding: 10px 20px;
+    background-color: var(--error-color);
+    color: white;
+    border-radius: 8px;
+    opacity: 0;
 }
 
+.alert.animate__fadeIn {
+    opacity: 1;
+}
+
+/* Final Step & End Game Styles */
 .final-step, .end-game {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 20px;
+    padding: 30px;
+    background: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+    width: 90%;
+    max-width: 500px;
 }
 
 .hidden {
     display: none;
 }
 
+h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: var(--secondary-light);
+    text-align: center;
+}
+
+h2 i {
+    margin-right: 10px;
+    color: var(--accent-color);
+}
+
+.input-group {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
 label {
-    font-size: 1.5rem;
-    margin: 10px 0;
+    display: block;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: var(--text-light);
 }
 
-input {
-    padding: 5px;
+label i {
+    margin-right: 8px;
+    color: var(--secondary-light);
+}
+
+.modern-input {
+    width: 100%;
+    padding: 12px 15px;
     font-size: 1.2rem;
-    border-radius: 5px;
-    transition: transform 0.2s;
+    font-family: 'Roboto Mono', monospace;
+    background: var(--glass-bg);
+    color: var(--text-light);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    transition: all 0.3s ease;
 }
 
-input.shake {
+.modern-input:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.3);
+}
+
+.modern-input.shake {
     animation: shake 0.5s ease;
 }
 
+.confirm-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: auto;
+    height: auto;
+    padding: 12px 30px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: linear-gradient(45deg, var(--success-color), var(--secondary-color));
+    border-radius: 50px;
+    margin-top: 10px;
+}
+
+.confirm-btn:hover {
+    background: linear-gradient(45deg, var(--secondary-color), var(--success-color));
+}
+
+.final-hints {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: var(--glass-bg);
+    border-radius: 10px;
+    border: 1px solid var(--glass-border);
+}
+
+.final-hints p {
+    font-size: 1.1rem;
+    margin: 10px 0;
+    padding: 8px 12px;
+    background: var(--glass-bg);
+    border-radius: 6px;
+    border-left: 3px solid var(--accent-color);
+}
+
+/* Animations */
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.1); }
@@ -144,9 +361,91 @@ input.shake {
     100% { transform: translateX(0); }
 }
 
-.header .btn {
-    padding: 30px 60px;
-    font-size: 1.2rem;
-    margin-left: 50px;
-    flex-shrink: 0;
+/* Responsive Styles */
+@media (max-width: 1024px) {
+    .header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .header-left, .header-center, .header-right {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .board {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .board {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    button {
+        width: 50px;
+        height: 50px;
+        font-size: 1rem;
+    }
+
+    .rule-container {
+        padding: 10px 15px;
+    }
+
+    #rule {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 15px 10px;
+    }
+
+    .timer-container, .rule-container {
+        padding: 8px 12px;
+    }
+
+    #timer {
+        font-size: 1.4rem;
+    }
+
+    .next-btn {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+
+    .board {
+        gap: 10px;
+        padding: 15px;
+    }
+
+    button {
+        width: 45px;
+        height: 45px;
+        font-size: 0.9rem;
+    }
+
+    .final-step, .end-game {
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    label {
+        font-size: 1rem;
+    }
+
+    .modern-input {
+        padding: 10px;
+        font-size: 1.1rem;
+    }
+
+    .confirm-btn {
+        padding: 10px 20px;
+        font-size: 1.1rem;
+    }
 }
