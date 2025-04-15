@@ -13,10 +13,38 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="assets/css/game.css">
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4/dist/umd/supabase.min.js"></script>
+    <script src="assets/js/supabase.js" defer></script>
     <script src="assets/js/game.js" defer></script>
     <title>Qual é o Segredo? - Jogo</title>
 </head>
 <body>
+    <!-- Modal para inserir o nome do jogador -->
+    <div id="player-name-modal" class="modal">
+        <div class="modal-content">
+            <h2><i class="fas fa-user"></i> Qual é o seu nome?</h2>
+            <div class="input-group">
+                <input type="text" id="player-name-input" class="modern-input" placeholder="Digite seu nome" maxlength="50">
+            </div>
+            <button class="btn confirm-btn" onclick="startGameWithPlayerName()">
+                <i class="fas fa-play"></i>
+                Iniciar Jogo
+            </button>
+        </div>
+    </div>
+
+    <!-- Tela de carregamento -->
+    <div id="loading-screen" class="modal hidden">
+        <div class="modal-content loading-content">
+            <h2><i class="fas fa-cog fa-spin"></i> Preparando o jogo...</h2>
+            <div class="loading-bar-container">
+                <div id="loading-bar" class="loading-bar"></div>
+            </div>
+            <p id="loading-message">Gerando tabuleiro...</p>
+        </div>
+    </div>
+
     <div class="game-container">
         <div class="header">
             <div class="header-left">
@@ -47,31 +75,7 @@
 
         <div id="alert" class="alert animate__animated"></div>
 
-        <div id="final-step" class="final-step hidden animate__animated animate__fadeIn">
-            <h2><i class="fas fa-check-circle"></i> Última Etapa</h2>
 
-            <p class="remaining-title"><i class="fas fa-star"></i> Seus números finais <i class="fas fa-star"></i></p>
-            <div id="remaining-numbers-final" class="remaining-numbers"></div>
-
-            <div class="input-group">
-                <label for="first">
-                    <i class="fas fa-sort-numeric-down"></i>
-                    Primeiro número:
-                </label>
-                <input type="text" id="first" class="modern-input">
-            </div>
-            <div class="input-group">
-                <label for="second">
-                    <i class="fas fa-sort-numeric-up"></i>
-                    Segundo número:
-                </label>
-                <input type="text" id="second" class="modern-input">
-            </div>
-            <button class="btn confirm-btn" onclick="checkFinalNumbers()">
-                <i class="fas fa-check"></i>
-                Confirmar
-            </button>
-        </div>
 
         <div id="end-game" class="end-game hidden animate__animated animate__fadeIn">
             <h2><i class="fas fa-key"></i> Descubra o segredo!</h2>
