@@ -47,6 +47,7 @@ let round = 0;
 let time = 0; // Tempo começa em 0 e conta para cima
 let timerInterval = null; // Para armazenar o intervalo do timer
 let playerName = ''; // Para armazenar o nome do jogador
+let errorCount = 0; // Contador de erros por pista (resetado a cada pista)
 
 // Função auxiliar para somar os algarismos de um número
 function sumDigits(n){
@@ -170,11 +171,31 @@ async function initializeGame() {
 
         // Exibir a primeira dica com o detetive indicando se é verdadeira ou falsa
         const regra = currentTabuleiro.regras[round];
+
+        // Definir cores para cada pista
+        const coresPistas = [
+            'var(--retro-purple)',  // Pista 0
+            'var(--retro-pink)',    // Pista 1
+            'var(--retro-cyan)',    // Pista 2
+            'var(--retro-yellow)',  // Pista 3
+            'var(--retro-orange)',  // Pista 4
+            'var(--accent-color)',  // Pista 5
+            'var(--primary-color)'  // Pista 6
+        ];
+
+        const corAtual = coresPistas[round % coresPistas.length];
+
         const detetiveIcon = regra.isTrue ?
-            '<i class="fas fa-user-secret" style="color: green;"></i> VERDADEIRA: ' :
-            '<i class="fas fa-user-secret" style="color: red;"></i> FALSA: ';
+            `<i class="fas fa-user-secret" style="color: green;"></i> <span style="color: ${corAtual}; font-weight: bold;">VERDADEIRA:</span> ` :
+            `<i class="fas fa-user-secret" style="color: red;"></i> <span style="color: ${corAtual}; font-weight: bold;">FALSA:</span> `;
 
         document.getElementById('rule').innerHTML = detetiveIcon + regra.texto;
+
+        // Atualizar a cor da regra container para combinar com a pista atual
+        const regraContainer = document.querySelector('.rule-container');
+        if (regraContainer) {
+            regraContainer.style.borderColor = corAtual;
+        }
 
         updateLoadingProgress(100, 'Jogo pronto!');
 
@@ -354,13 +375,13 @@ function generateFinalHints(segredo) {
   // Obter o outro número (não o segredo)
   const outroNumero = nums[0] === segredo ? nums[1] : nums[0];
 
-  // Gerar dicas fixas
-  const dicas = [
-    `O resto da divisão por 7 é ${segredo % 7}`,
-    `A soma dos algarismos é ${sumDigits(segredo)}`
-  ];
+  // Inicializar o array de dicas
+  const dicas = [];
 
-  // Gerar uma dica aleatória que diferencie os dois números
+  // Primeira dica - sempre a mesma: resto da divisão por 7
+  dicas.push(`O resto da divisão por 7 é ${segredo % 7}`);
+
+  // Segunda dica - sempre aleatória entre as opções que diferenciam os dois números
   const diferencas = [
     // Comparação de tamanho
     segredo > outroNumero ?
@@ -380,7 +401,18 @@ function generateFinalHints(segredo) {
     // Divisão por 3
     segredo % 3 === 0 ?
       `O número secreto é divisível por 3` :
-      `O número secreto não é divisível por 3`
+      `O número secreto não é divisível por 3`,
+
+    // Soma dos algarismos
+    `A soma dos algarismos é ${sumDigits(segredo)}`,
+
+    // Divisão por 2
+    segredo % 2 === 0 ?
+      `O número secreto é divisível por 2` :
+      `O número secreto não é divisível por 2`,
+
+    // Último dígito
+    `O último dígito do número secreto é ${segredo % 10}`
   ];
 
   // Escolher uma dica aleatória que diferencie os dois números
@@ -428,10 +460,15 @@ function markNumber(event){
 
     if(shouldMark){
         btn.classList.add('marked');
+        // Adicionar a classe correspondente à pista atual
+        btn.classList.add(`clue-${round}`);
         btn.classList.add('pulse');
         btn.disabled = true; // Não deixa clicar novamente
         setTimeout(()=>btn.classList.remove('pulse'),300);
     }else{
+        // Incrementar o contador de erros
+        errorCount++;
+
         btn.classList.add('shake');
         document.getElementById('alert').textContent="Número não atende a regra!";
 
@@ -446,6 +483,56 @@ function markNumber(event){
                 console.error('Erro ao tentar registrar erro na pista:', error);
                 // Continuar o jogo mesmo se houver erro ao registrar o erro
             }
+        }
+
+        // Verificar o número de erros e mostrar mensagens apropriadas
+        if (errorCount === 1) {
+            // Após o primeiro erro, mostrar modal sobre a veracidade da pista atual
+            setTimeout(() => {
+                // Criar uma mensagem específica para a pista atual
+                let mensagem = 'Preste atenção na veracidade desta pista!';
+                if (regra.isTrue) {
+                    mensagem += ' Esta pista é VERDADEIRA, então você deve marcar os números que atendem à regra.';
+                } else {
+                    mensagem += ' Esta pista é FALSA, então você deve marcar os números que NÃO atendem à regra.';
+                }
+                showModal('Atenção!', mensagem);
+            }, 600);
+        } else if (errorCount === 2) {
+            // Após o segundo erro, dar uma dica específica relacionada à pista atual
+            setTimeout(() => {
+                // Gerar uma dica específica com base no tipo de regra atual
+                let mensagemDica = 'Dica: ';
+
+                // Analisar o texto da regra para determinar o tipo de dica a ser dada
+                if (regra.texto.includes("múltiplos de 4")) {
+                    mensagemDica += "Um número é múltiplo de 4 quando seus dois últimos dígitos formam um número divisível por 4.";
+                }
+                else if (regra.texto.includes("divisíveis por 5")) {
+                    mensagemDica += "Um número é divisível por 5 quando termina em 0 ou 5.";
+                }
+                else if (regra.texto.includes("números pares")) {
+                    mensagemDica += "Números pares são aqueles que terminam em 0, 2, 4, 6 ou 8.";
+                }
+                else if (regra.texto.includes("múltiplos de 3")) {
+                    mensagemDica += "Um número é múltiplo de 3 quando a soma de seus algarismos é divisível por 3.";
+                }
+                else if (regra.texto.includes("divisíveis por 9")) {
+                    mensagemDica += "Um número é divisível por 9 quando a soma de seus algarismos é divisível por 9.";
+                }
+                else if (regra.texto.includes("resto da divisão por 5 é 2")) {
+                    mensagemDica += "Números que terminam em 2 ou 7 têm resto 2 quando divididos por 5.";
+                }
+                else if (regra.texto.includes("soma dos algarismos é ímpar")) {
+                    mensagemDica += "Para saber se a soma dos algarismos é ímpar, some todos os dígitos e veja se o resultado termina em 1, 3, 5, 7 ou 9.";
+                }
+                else {
+                    // Dica genérica caso não identifique o tipo de regra
+                    mensagemDica += "Analise cuidadosamente a regra e lembre-se de considerar se ela é verdadeira ou falsa.";
+                }
+
+                showModal('Dica!', mensagemDica);
+            }, 600);
         }
 
         setTimeout(()=>{
@@ -546,17 +633,40 @@ function avancarParaProximaPistaValida() {
     // Atualizar o round e a interface
     round = proximoRound;
 
+    // Resetar o contador de erros ao avançar para uma nova pista
+    errorCount = 0;
+
     if (round < ROUNDS) {
         // Ainda temos pistas válidas
         const regraElement = document.getElementById('rule');
         if (regraElement && currentTabuleiro.regras[round]) {
             // Atualizar o texto da regra com o detetive indicando se é verdadeira ou falsa
             const regra = currentTabuleiro.regras[round];
+
+            // Definir cores para cada pista
+            const coresPistas = [
+                'var(--retro-purple)',  // Pista 0
+                'var(--retro-pink)',    // Pista 1
+                'var(--retro-cyan)',    // Pista 2
+                'var(--retro-yellow)',  // Pista 3
+                'var(--retro-orange)',  // Pista 4
+                'var(--accent-color)',  // Pista 5
+                'var(--primary-color)'  // Pista 6
+            ];
+
+            const corAtual = coresPistas[round % coresPistas.length];
+
             const detetiveIcon = regra.isTrue ?
-                '<i class="fas fa-user-secret" style="color: green;"></i> VERDADEIRA: ' :
-                '<i class="fas fa-user-secret" style="color: red;"></i> FALSA: ';
+                `<i class="fas fa-user-secret" style="color: green;"></i> <span style="color: ${corAtual}; font-weight: bold;">VERDADEIRA:</span> ` :
+                `<i class="fas fa-user-secret" style="color: red;"></i> <span style="color: ${corAtual}; font-weight: bold;">FALSA:</span> `;
 
             regraElement.innerHTML = detetiveIcon + regra.texto;
+
+            // Atualizar a cor da regra container para combinar com a pista atual
+            const regraContainer = document.querySelector('.rule-container');
+            if (regraContainer) {
+                regraContainer.style.borderColor = corAtual;
+            }
             console.log(`Avançando para a pista ${round + 1}: ${regra.texto} (${regra.isTrue ? 'Verdadeira' : 'Falsa'})`);
         }
     } else {
@@ -578,6 +688,9 @@ function avancarParaProximaPistaValida() {
         // Ir direto para a tela de adivinhar o segredo
         checkFinalNumbers();
         console.log("Avançando para a última etapa!");
+
+        // Resetar o contador de erros ao chegar na tela final
+        errorCount = 0;
     }
 
     return true;
@@ -667,8 +780,76 @@ function finishGame(){
     sInp.style.transform='scale(1.2)';
     setTimeout(()=>window.location.href='end.html',500);
   }else{
+    // Incrementar o contador de erros
+    errorCount++;
+
     sInp.classList.add('shake');
     document.getElementById('alert').textContent="Errado! Tente novamente.";
+
+    // Verificar o número de erros e mostrar mensagens apropriadas
+    if (errorCount === 1) {
+      // Após o primeiro erro, mostrar modal com dica
+      setTimeout(() => {
+        showModal('Atenção!', 'Preste atenção nas dicas finais! Elas contêm informações importantes para descobrir o segredo.');
+      }, 600);
+    } else if (errorCount === 2) {
+      // Após o segundo erro, dar uma dica mais específica sobre o número secreto
+      setTimeout(() => {
+        let mensagemDica = 'Dica: ';
+
+        // Escolher uma dica que não esteja já nas dicas finais
+        const dicasExistentes = currentTabuleiro.dicasFinais.map(d => d.toLowerCase());
+
+        // Possíveis dicas adicionais
+        const possiveisDicas = [
+          currentTabuleiro.segredo % 3 === 0 ?
+            'O número secreto é divisível por 3.' :
+            'O número secreto não é divisível por 3.',
+
+          currentTabuleiro.segredo % 2 === 0 ?
+            'O número secreto é par.' :
+            'O número secreto é ímpar.',
+
+          currentTabuleiro.segredo < 50 ?
+            'O número secreto é menor que 50.' :
+            'O número secreto é maior ou igual a 50.',
+
+          currentTabuleiro.segredo.toString().length === 1 ?
+            'O número secreto tem apenas um algarismo.' :
+            `O número secreto tem ${currentTabuleiro.segredo.toString().length} algarismos.`,
+
+          sumDigits(currentTabuleiro.segredo) % 2 === 0 ?
+            'A soma dos algarismos do número secreto é par.' :
+            'A soma dos algarismos do número secreto é ímpar.'
+        ];
+
+        // Encontrar uma dica que não esteja nas dicas finais
+        let dicaEscolhida = null;
+        for (const dica of possiveisDicas) {
+          let jaExiste = false;
+          for (const dicaExistente of dicasExistentes) {
+            if (dicaExistente.includes(dica.toLowerCase())) {
+              jaExiste = true;
+              break;
+            }
+          }
+
+          if (!jaExiste) {
+            dicaEscolhida = dica;
+            break;
+          }
+        }
+
+        // Se todas as dicas já existirem, escolher uma aleatória
+        if (!dicaEscolhida) {
+          dicaEscolhida = possiveisDicas[Math.floor(Math.random() * possiveisDicas.length)];
+        }
+
+        mensagemDica += dicaEscolhida;
+        showModal('Dica!', mensagemDica);
+      }, 600);
+    }
+
     setTimeout(()=>{
       sInp.classList.remove('shake');
       document.getElementById('alert').textContent='';
@@ -775,4 +956,62 @@ function isSolucionavel(tabuleiro){
 
   // Verificar se restam exatamente 2 números (incluindo o segredo)
   return nums.length === 2;
+}
+
+// Função para mostrar um modal com mensagem personalizada
+function showModal(titulo, mensagem) {
+  // Verificar se já existe um modal e removê-lo
+  const modalExistente = document.getElementById('custom-modal');
+  if (modalExistente) {
+    modalExistente.remove();
+  }
+
+  // Criar o elemento do modal
+  const modal = document.createElement('div');
+  modal.id = 'custom-modal';
+  modal.className = 'modal animate__animated animate__fadeIn';
+
+  // Criar o conteúdo do modal
+  const modalContent = document.createElement('div');
+  modalContent.className = 'modal-content';
+
+  // Adicionar título
+  const tituloElement = document.createElement('h2');
+  tituloElement.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${titulo}`;
+  modalContent.appendChild(tituloElement);
+
+  // Adicionar mensagem
+  const mensagemElement = document.createElement('p');
+  mensagemElement.textContent = mensagem;
+  modalContent.appendChild(mensagemElement);
+
+  // Adicionar botão de fechar
+  const botaoFechar = document.createElement('button');
+  botaoFechar.className = 'btn confirm-btn';
+  botaoFechar.innerHTML = '<i class="fas fa-check"></i> Entendi';
+  botaoFechar.onclick = function() {
+    modal.classList.remove('animate__fadeIn');
+    modal.classList.add('animate__fadeOut');
+    setTimeout(() => {
+      modal.remove();
+    }, 500);
+  };
+  modalContent.appendChild(botaoFechar);
+
+  // Adicionar o conteúdo ao modal
+  modal.appendChild(modalContent);
+
+  // Adicionar o modal ao corpo do documento
+  document.body.appendChild(modal);
+
+  // Adicionar evento para fechar o modal ao clicar fora dele
+  modal.addEventListener('click', function(event) {
+    if (event.target === modal) {
+      modal.classList.remove('animate__fadeIn');
+      modal.classList.add('animate__fadeOut');
+      setTimeout(() => {
+        modal.remove();
+      }, 500);
+    }
+  });
 }
