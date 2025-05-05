@@ -17,19 +17,19 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.38.4/dist/umd/supabase.min.js"></script>
     <script src="assets/js/supabase.js" defer></script>
     <script src="assets/js/game.js" defer></script>
-    <title>Qual é o Segredo? - Jogo</title>
+    <title>Código Quântico - Hackear Sistema</title>
 </head>
 <body>
     <!-- Modal para inserir o nome do jogador -->
     <div id="player-name-modal" class="modal">
         <div class="modal-content">
-            <h2><i class="fas fa-user"></i> Qual é o seu nome?</h2>
+            <h2><i class="fas fa-user-secret"></i> Identificação do Agente</h2>
             <div class="input-group">
-                <input type="text" id="player-name-input" class="modern-input" placeholder="Digite seu nome" maxlength="50">
+                <input type="text" id="player-name-input" class="modern-input" placeholder="Digite seu codinome" maxlength="50">
             </div>
             <button class="btn confirm-btn" onclick="startGameWithPlayerName()">
-                <i class="fas fa-play"></i>
-                Iniciar Jogo
+                <i class="fas fa-terminal"></i>
+                Acessar Sistema
             </button>
         </div>
     </div>
@@ -37,11 +37,11 @@
     <!-- Tela de carregamento -->
     <div id="loading-screen" class="modal hidden">
         <div class="modal-content loading-content">
-            <h2><i class="fas fa-cog fa-spin"></i> Preparando o jogo...</h2>
+            <h2><i class="fas fa-microchip fa-spin"></i> Inicializando Sistema...</h2>
             <div class="loading-bar-container">
                 <div id="loading-bar" class="loading-bar"></div>
             </div>
-            <p id="loading-message">Gerando tabuleiro...</p>
+            <p id="loading-message">Decodificando firewall...</p>
         </div>
     </div>
 
@@ -58,6 +58,13 @@
                 <div class="rule-container animate__animated animate__fadeIn">
                     <i class="fas fa-lightbulb"></i>
                     <p id="rule">Regra: Elimine números com base nas pistas.</p>
+                    <div class="tooltip">
+                        <i class="fas fa-question-circle tooltip-icon"></i>
+                        <span class="tooltip-text">
+                            Se a pista for VERDADEIRA, elimine os números que ATENDEM à regra.
+                            Se a pista for FALSA, elimine os números que NÃO ATENDEM à regra.
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -84,24 +91,40 @@
 
 
         <div id="end-game" class="end-game hidden animate__animated animate__fadeIn">
-            <h2><i class="fas fa-key"></i> Descubra o segredo!</h2>
+            <h2><i class="fas fa-code"></i> Código de Desativação</h2>
 
-            <p class="remaining-title"><i class="fas fa-star"></i> Seus números finais <i class="fas fa-star"></i></p>
+            <p class="remaining-title"><i class="fas fa-microchip"></i> Sequências Finais <i class="fas fa-microchip"></i></p>
             <div id="remaining-numbers-end" class="remaining-numbers"></div>
 
             <div id="final-hints" class="final-hints"></div>
             <div class="input-group">
                 <label for="secret">
-                    <i class="fas fa-lock-open"></i>
-                    Qual é o segredo?
+                    <i class="fas fa-key"></i>
+                    Insira o código quântico:
                 </label>
                 <input type="text" id="secret" class="modern-input">
             </div>
             <button class="btn confirm-btn" onclick="finishGame()">
-                <i class="fas fa-unlock"></i>
-                Confirmar
+                <i class="fas fa-power-off"></i>
+                Desativar ENIGMA
             </button>
         </div>
+    </div>
+
+    <!-- Tutorial Container -->
+    <div id="tutorial-container" class="tutorial-container">
+        <h3><i class="fas fa-graduation-cap"></i> Tutorial</h3>
+        <p>Bem-vindo ao jogo! Aprenda como identificar pistas verdadeiras e falsas.</p>
+        <button id="show-tutorial-btn" onclick="showTutorial()">Ver Tutorial</button>
+        <button id="close-tutorial-btn" onclick="closeTutorial()">Fechar</button>
+    </div>
+
+    <!-- Botão de Acessibilidade -->
+    <div id="accessibility-container" style="position: fixed; top: 20px; right: 20px; z-index: 999; background-color: var(--retro-purple); padding: 10px; border: 3px solid var(--text-light); box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.7);">
+        <button id="toggle-contrast-btn" onclick="toggleHighContrast()" style="background-color: var(--retro-yellow); color: var(--text-dark); border: 2px solid var(--text-dark); padding: 8px; font-family: 'Press Start 2P', cursive; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+            <i class="fas fa-universal-access"></i>
+            <span>Alto Contraste</span>
+        </button>
     </div>
 
     <!-- Partículas de fundo -->

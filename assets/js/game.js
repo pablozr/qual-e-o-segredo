@@ -8,37 +8,37 @@ const FIXED_RULES = [
     {
         texto: "Elimine números múltiplos de 4",
         check: n => n % 4 === 0,
-        isTrue: Math.random() < 0.5 // 50% de chance de ser verdadeira ou falsa
+        isTrue: Math.random() < 0.3 // 30% de chance de ser verdadeira e 70% de ser falsa
     },
     {
         texto: "Elimine números divisíveis por 5",
         check: n => n % 5 === 0,
-        isTrue: Math.random() < 0.5
+        isTrue: Math.random() < 0.3
     },
     {
         texto: "Elimine números pares",
         check: n => n % 2 === 0,
-        isTrue: Math.random() < 0.5
+        isTrue: Math.random() < 0.3
     },
     {
         texto: "Elimine números que não são múltiplos de 3",
         check: n => n % 3 !== 0,
-        isTrue: Math.random() < 0.5
+        isTrue: Math.random() < 0.3
     },
     {
         texto: "Elimine números divisíveis por 9",
         check: n => n % 9 === 0,
-        isTrue: Math.random() < 0.5
+        isTrue: Math.random() < 0.3
     },
     {
         texto: "Elimine números cujo resto da divisão por 5 é 2",
         check: n => n % 5 === 2,
-        isTrue: Math.random() < 0.5
+        isTrue: Math.random() < 0.3
     },
     {
         texto: "Elimine números cuja soma dos algarismos é ímpar",
         check: n => sumDigits(n) % 2 === 1,
-        isTrue: Math.random() < 0.5
+        isTrue: Math.random() < 0.3
     }
 ];
 
@@ -48,6 +48,19 @@ let time = 0; // Tempo começa em 0 e conta para cima
 let timerInterval = null; // Para armazenar o intervalo do timer
 let playerName = ''; // Para armazenar o nome do jogador
 let errorCount = 0; // Contador de erros por pista (resetado a cada pista)
+
+// Variáveis para controle de spam
+let lastClickTime = 0; // Último momento em que um número foi clicado
+let clickCooldown = 500; // Tempo mínimo entre cliques (em milissegundos)
+let clickCount = 0; // Contador de cliques em um curto período
+let clickCountResetTimeout = null; // Timeout para resetar o contador de cliques
+let isClickBlocked = false; // Flag para indicar se os cliques estão bloqueados
+
+// Variável para controle do tutorial
+let tutorialShown = false;
+
+// Variável para controle do modo de alto contraste
+let highContrastMode = false;
 
 // Função auxiliar para somar os algarismos de um número
 function sumDigits(n){
@@ -172,35 +185,62 @@ async function initializeGame() {
         // Exibir a primeira dica com o detetive indicando se é verdadeira ou falsa
         const regra = currentTabuleiro.regras[round];
 
-        // Definir cores para cada pista
+        // Definir cores para cada pista com melhor contraste
         const coresPistas = [
-            'var(--retro-purple)',  // Pista 0
-            'var(--retro-pink)',    // Pista 1
-            'var(--retro-cyan)',    // Pista 2
-            'var(--retro-yellow)',  // Pista 3
-            'var(--retro-orange)',  // Pista 4
-            'var(--accent-color)',  // Pista 5
-            'var(--primary-color)'  // Pista 6
+            '#8A2BE2',  // Azul violeta (mais escuro que retro-purple)
+            '#FF1493',  // Rosa profundo (mais escuro que retro-pink)
+            '#00868B',  // Ciano escuro (mais escuro que retro-cyan)
+            '#B8860B',  // Dourado escuro (mais escuro que retro-yellow)
+            '#D2691E',  // Chocolate (mais escuro que retro-orange)
+            '#228B22',  // Verde floresta (mais escuro que accent-color)
+            '#B22222'   // Vermelho tijolo (mais escuro que primary-color)
         ];
 
         const corAtual = coresPistas[round % coresPistas.length];
 
+        // Melhorar o feedback visual para pistas verdadeiras/falsas usando variáveis CSS
         const detetiveIcon = regra.isTrue ?
-            `<i class="fas fa-user-secret" style="color: green;"></i> <span style="color: ${corAtual}; font-weight: bold;">VERDADEIRA:</span> ` :
-            `<i class="fas fa-user-secret" style="color: red;"></i> <span style="color: ${corAtual}; font-weight: bold;">FALSA:</span> `;
+            `<div style="display: inline-flex; align-items: center; background-color: var(--true-color); padding: 5px 10px; border-radius: 5px; margin-right: 10px; border: 2px solid #FFFFFF;">
+                <i class="fas fa-check-circle" style="color: #FFFFFF; margin-right: 5px;"></i>
+                <span style="color: #FFFFFF; font-weight: bold; text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);">VERDADEIRA</span>
+            </div> ` :
+            `<div style="display: inline-flex; align-items: center; background-color: var(--false-color); padding: 5px 10px; border-radius: 5px; margin-right: 10px; border: 2px solid #FFFFFF;">
+                <i class="fas fa-times-circle" style="color: #FFFFFF; margin-right: 5px;"></i>
+                <span style="color: #FFFFFF; font-weight: bold; text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);">FALSA</span>
+            </div> `;
 
-        document.getElementById('rule').innerHTML = detetiveIcon + regra.texto;
+        const regraElement = document.getElementById('rule');
+        regraElement.innerHTML = detetiveIcon + regra.texto;
 
         // Atualizar a cor da regra container para combinar com a pista atual
         const regraContainer = document.querySelector('.rule-container');
         if (regraContainer) {
-            regraContainer.style.borderColor = corAtual;
+            regraContainer.style.backgroundColor = corAtual;
+            regraContainer.style.borderColor = "#FFFFFF";
+            regraContainer.style.color = "#FFFFFF";
+
+            // Garantir que o texto da regra seja branco para melhor contraste
+            regraElement.style.color = "#FFFFFF";
+            regraElement.style.textShadow = "2px 2px 0 rgba(0, 0, 0, 0.5)";
+
+            // Garantir que o ícone também tenha boa visibilidade
+            const iconElement = regraContainer.querySelector("i.fa-lightbulb");
+            if (iconElement) {
+                iconElement.style.color = "#FFFFFF";
+            }
         }
 
         updateLoadingProgress(100, 'Jogo pronto!');
 
         // Iniciar o timer
         startTimer();
+
+        // Mostrar o tutorial automaticamente na primeira vez
+        if (!tutorialShown) {
+            setTimeout(() => {
+                showTutorial();
+            }, 1000);
+        }
     } catch (error) {
         console.error('Erro ao inicializar o jogo:', error);
         alert('Ocorreu um erro ao inicializar o jogo. Por favor, recarregue a página.');
@@ -301,16 +341,17 @@ function generateRandomTabuleiro() {
 function generateRandomNumbers(count){
     const numbers = new Set();
     while(numbers.size < count) {
-        // Reduzir a chance de números de 3 algarismos
-        // 70% de chance de gerar números de 1-2 algarismos (1-99)
-        // 30% de chance de gerar números de 3 algarismos (100-999)
+        // Reduzir ainda mais a chance de números de 3 algarismos
+        // 90% de chance de gerar números de 1-2 algarismos (1-99)
+        // 10% de chance de gerar números de 3 algarismos (100-999)
         let num;
-        if (Math.random() < 0.7) {
+        if (Math.random() < 0.9) {
             // Gerar número de 1-2 algarismos (1-99)
             num = Math.floor(Math.random() * 99) + 1;
         } else {
             // Gerar número de 3 algarismos (100-999)
-            num = Math.floor(Math.random() * 900) + 100;
+            // Limitar a números menores para melhor visualização
+            num = Math.floor(Math.random() * 400) + 100;
         }
         numbers.add(num);
     }
@@ -425,16 +466,48 @@ function generateFinalHints(segredo) {
 function generateBoard(){
     const board=document.getElementById('board');
     board.innerHTML='';
-    const numsCol=Math.ceil(NUMEROS_TOTAL/COLUNAS);
+
+    // Calcular quantos números reais temos para distribuir igualmente
+    const totalNumeros = currentTabuleiro.numeros.length;
+
+    // Distribuir os números igualmente entre as colunas
+    const numerosPerColuna = Math.ceil(totalNumeros / COLUNAS);
+
     for(let i=0;i<COLUNAS;i++){
         const col=document.createElement('div');
         col.classList.add('column');
-        for(let j=i*numsCol;j<(i+1)*numsCol&&j<NUMEROS_TOTAL;j++){
-          const btn=document.createElement('button');
-          btn.textContent=currentTabuleiro.numeros[j].valor;
-          btn.addEventListener('click',markNumber);
-          col.appendChild(btn);
+
+        // Calcular quantos números devem ir nesta coluna
+        const startIdx = i * numerosPerColuna;
+        const endIdx = Math.min(startIdx + numerosPerColuna, totalNumeros);
+
+        for(let j=startIdx; j<endIdx; j++){
+            const btn=document.createElement('button');
+            btn.textContent=currentTabuleiro.numeros[j].valor;
+            btn.addEventListener('click',markNumber);
+
+            // Ajustar o tamanho do botão com base no número de dígitos
+            const numDigits = btn.textContent.length;
+            if (numDigits > 2) {
+                btn.style.fontSize = '1rem'; // Fonte ainda menor para números de 3 dígitos
+                btn.style.lineHeight = '0.9'; // Reduzir espaçamento entre linhas
+            } else if (numDigits == 2) {
+                btn.style.fontSize = '1.1rem'; // Tamanho médio para números de 2 dígitos
+            }
+
+            col.appendChild(btn);
         }
+
+        // Se esta coluna tiver menos números que as outras, adicionar espaços vazios
+        // para manter o alinhamento
+        const numerosFaltantes = numerosPerColuna - (endIdx - startIdx);
+        for (let k=0; k<numerosFaltantes; k++) {
+            const spacer = document.createElement('div');
+            spacer.style.height = '80px'; // Mesma altura dos botões (atualizada para 80px)
+            spacer.style.visibility = 'hidden'; // Invisível mas ocupa espaço
+            col.appendChild(spacer);
+        }
+
         board.appendChild(col);
     }
 }
@@ -452,6 +525,54 @@ function markNumber(event){
     if (btn.classList.contains('marked') || btn.disabled){
         return; // evita clique se já marcado ou desabilitado
     }
+
+    // Verificar se os cliques estão bloqueados
+    if (isClickBlocked) {
+        // Adicionar efeito visual para indicar que os cliques estão bloqueados
+        btn.classList.add('blocked');
+        setTimeout(() => btn.classList.remove('blocked'), 300);
+        return;
+    }
+
+    // Verificar o tempo desde o último clique
+    const currentTime = Date.now();
+    if (currentTime - lastClickTime < clickCooldown) {
+        // Clique muito rápido, incrementar contador
+        clickCount++;
+
+        // Se exceder o limite de cliques rápidos, bloquear temporariamente
+        if (clickCount >= 5) {
+            isClickBlocked = true;
+
+            // Mostrar mensagem de aviso
+            showModal('Calma!', 'Você está clicando muito rápido! Pense antes de clicar. Os cliques serão bloqueados por alguns segundos.');
+
+            // Desbloquear após 3 segundos
+            setTimeout(() => {
+                isClickBlocked = false;
+                clickCount = 0;
+                document.getElementById('alert').textContent = "Cliques desbloqueados. Pense antes de clicar!";
+                setTimeout(() => {
+                    document.getElementById('alert').textContent = "";
+                }, 2000);
+            }, 3000);
+
+            return;
+        }
+
+        // Resetar o contador após 5 segundos sem cliques rápidos
+        clearTimeout(clickCountResetTimeout);
+        clickCountResetTimeout = setTimeout(() => {
+            clickCount = 0;
+        }, 5000);
+    } else {
+        // Clique com intervalo adequado, resetar contador
+        clickCount = 0;
+    }
+
+    // Atualizar o tempo do último clique
+    lastClickTime = currentTime;
+
     const numero = parseInt(btn.textContent);
     const regra = currentTabuleiro.regras[round];
 
@@ -643,29 +764,42 @@ function avancarParaProximaPistaValida() {
             // Atualizar o texto da regra com o detetive indicando se é verdadeira ou falsa
             const regra = currentTabuleiro.regras[round];
 
-            // Definir cores para cada pista
+            // Definir cores para cada pista com melhor contraste
             const coresPistas = [
-                'var(--retro-purple)',  // Pista 0
-                'var(--retro-pink)',    // Pista 1
-                'var(--retro-cyan)',    // Pista 2
-                'var(--retro-yellow)',  // Pista 3
-                'var(--retro-orange)',  // Pista 4
-                'var(--accent-color)',  // Pista 5
-                'var(--primary-color)'  // Pista 6
+                '#8A2BE2',  // Azul violeta (mais escuro que retro-purple)
+                '#FF1493',  // Rosa profundo (mais escuro que retro-pink)
+                '#00868B',  // Ciano escuro (mais escuro que retro-cyan)
+                '#B8860B',  // Dourado escuro (mais escuro que retro-yellow)
+                '#D2691E',  // Chocolate (mais escuro que retro-orange)
+                '#228B22',  // Verde floresta (mais escuro que accent-color)
+                '#B22222'   // Vermelho tijolo (mais escuro que primary-color)
             ];
 
             const corAtual = coresPistas[round % coresPistas.length];
 
+            // Sempre usar texto branco para garantir legibilidade
             const detetiveIcon = regra.isTrue ?
-                `<i class="fas fa-user-secret" style="color: green;"></i> <span style="color: ${corAtual}; font-weight: bold;">VERDADEIRA:</span> ` :
-                `<i class="fas fa-user-secret" style="color: red;"></i> <span style="color: ${corAtual}; font-weight: bold;">FALSA:</span> `;
+                `<i class="fas fa-user-secret" style="color: #00FF00;"></i> <span style="color: #FFFFFF; font-weight: bold; text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);">VERDADEIRA:</span> ` :
+                `<i class="fas fa-user-secret" style="color: #FF0000;"></i> <span style="color: #FFFFFF; font-weight: bold; text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);">FALSA:</span> `;
 
             regraElement.innerHTML = detetiveIcon + regra.texto;
 
             // Atualizar a cor da regra container para combinar com a pista atual
             const regraContainer = document.querySelector('.rule-container');
             if (regraContainer) {
-                regraContainer.style.borderColor = corAtual;
+                regraContainer.style.backgroundColor = corAtual;
+                regraContainer.style.borderColor = "#FFFFFF";
+                regraContainer.style.color = "#FFFFFF";
+
+                // Garantir que o texto da regra seja branco para melhor contraste
+                regraElement.style.color = "#FFFFFF";
+                regraElement.style.textShadow = "2px 2px 0 rgba(0, 0, 0, 0.5)";
+
+                // Garantir que o ícone também tenha boa visibilidade
+                const iconElement = regraContainer.querySelector("i.fa-lightbulb");
+                if (iconElement) {
+                    iconElement.style.color = "#FFFFFF";
+                }
             }
             console.log(`Avançando para a pista ${round + 1}: ${regra.texto} (${regra.isTrue ? 'Verdadeira' : 'Falsa'})`);
         }
@@ -697,6 +831,54 @@ function avancarParaProximaPistaValida() {
 }
 
 function nextRound() {
+    // Verificar se os cliques estão bloqueados
+    if (isClickBlocked) {
+        document.getElementById('alert').textContent = "Aguarde o desbloqueio para avançar.";
+        setTimeout(() => {
+            document.getElementById('alert').textContent = "";
+        }, 2000);
+        return false;
+    }
+
+    // Verificar o tempo desde o último clique
+    const currentTime = Date.now();
+    if (currentTime - lastClickTime < clickCooldown) {
+        // Clique muito rápido, incrementar contador
+        clickCount++;
+
+        // Se exceder o limite de cliques rápidos, bloquear temporariamente
+        if (clickCount >= 5) {
+            isClickBlocked = true;
+
+            // Mostrar mensagem de aviso
+            showModal('Calma!', 'Você está clicando muito rápido! Pense antes de avançar. Os cliques serão bloqueados por alguns segundos.');
+
+            // Desbloquear após 3 segundos
+            setTimeout(() => {
+                isClickBlocked = false;
+                clickCount = 0;
+                document.getElementById('alert').textContent = "Cliques desbloqueados. Pense antes de avançar!";
+                setTimeout(() => {
+                    document.getElementById('alert').textContent = "";
+                }, 2000);
+            }, 3000);
+
+            return false;
+        }
+
+        // Resetar o contador após 5 segundos sem cliques rápidos
+        clearTimeout(clickCountResetTimeout);
+        clickCountResetTimeout = setTimeout(() => {
+            clickCount = 0;
+        }, 5000);
+    } else {
+        // Clique com intervalo adequado, resetar contador
+        clickCount = 0;
+    }
+
+    // Atualizar o tempo do último clique
+    lastClickTime = currentTime;
+
     // Verificar se há números para marcar na regra atual
     if (round < ROUNDS && currentTabuleiro.regras[round]) {
         const existemNumerosParaMarcar = verificarSeExistemNumerosParaMarcar(round);
@@ -759,6 +941,54 @@ function checkFinalNumbers(){
 }
 
 function finishGame(){
+  // Verificar se os cliques estão bloqueados
+  if (isClickBlocked) {
+    document.getElementById('alert').textContent = "Aguarde o desbloqueio para tentar novamente.";
+    setTimeout(() => {
+      document.getElementById('alert').textContent = "";
+    }, 2000);
+    return;
+  }
+
+  // Verificar o tempo desde o último clique
+  const currentTime = Date.now();
+  if (currentTime - lastClickTime < clickCooldown) {
+    // Clique muito rápido, incrementar contador
+    clickCount++;
+
+    // Se exceder o limite de cliques rápidos, bloquear temporariamente
+    if (clickCount >= 5) {
+      isClickBlocked = true;
+
+      // Mostrar mensagem de aviso
+      showModal('Calma!', 'Você está clicando muito rápido! Pense antes de tentar. Os cliques serão bloqueados por alguns segundos.');
+
+      // Desbloquear após 3 segundos
+      setTimeout(() => {
+        isClickBlocked = false;
+        clickCount = 0;
+        document.getElementById('alert').textContent = "Cliques desbloqueados. Pense antes de tentar!";
+        setTimeout(() => {
+          document.getElementById('alert').textContent = "";
+        }, 2000);
+      }, 3000);
+
+      return;
+    }
+
+    // Resetar o contador após 5 segundos sem cliques rápidos
+    clearTimeout(clickCountResetTimeout);
+    clickCountResetTimeout = setTimeout(() => {
+      clickCount = 0;
+    }, 5000);
+  } else {
+    // Clique com intervalo adequado, resetar contador
+    clickCount = 0;
+  }
+
+  // Atualizar o tempo do último clique
+  lastClickTime = currentTime;
+
   const sInp=document.getElementById('secret'),s=parseInt(sInp.value);
   if(s===currentTabuleiro.segredo){
     // Parar o timer e armazenar o tempo final
@@ -1014,4 +1244,140 @@ function showModal(titulo, mensagem) {
       }, 500);
     }
   });
+}
+
+// Função para mostrar o tutorial
+function showTutorial() {
+  // Conteúdo do tutorial
+  const tutorialContent = `
+    <h2><i class="fas fa-graduation-cap"></i> Como Jogar</h2>
+
+    <h3>Entendendo as Pistas</h3>
+    <p>Cada pista pode ser VERDADEIRA ou FALSA, indicado pelo ícone colorido.</p>
+
+    <div style="display: flex; align-items: center; margin: 15px 0; background-color: var(--true-color); padding: 10px; border-radius: 5px;">
+      <i class="fas fa-check-circle" style="color: #FFFFFF; margin-right: 10px;"></i>
+      <span style="color: #FFFFFF; font-weight: bold;">VERDADEIRA</span>
+    </div>
+    <p>Se a pista for VERDADEIRA, você deve eliminar os números que ATENDEM à regra.</p>
+    <p>Exemplo: Se a pista for "Elimine números pares" e for VERDADEIRA, você deve marcar todos os números pares (2, 4, 6, etc.).</p>
+
+    <div style="display: flex; align-items: center; margin: 15px 0; background-color: var(--false-color); padding: 10px; border-radius: 5px;">
+      <i class="fas fa-times-circle" style="color: #FFFFFF; margin-right: 10px;"></i>
+      <span style="color: #FFFFFF; font-weight: bold;">FALSA</span>
+    </div>
+    <p>Se a pista for FALSA, você deve eliminar os números que NÃO ATENDEM à regra.</p>
+    <p>Exemplo: Se a pista for "Elimine números pares" e for FALSA, você deve marcar todos os números ímpares (1, 3, 5, etc.).</p>
+
+    <h3>Objetivo do Jogo</h3>
+    <p>Após aplicar todas as 7 pistas, restarão apenas 2 números. Use as dicas finais para descobrir qual é o número secreto.</p>
+  `;
+
+  // Mostrar o modal com o conteúdo do tutorial
+  showCustomModal(tutorialContent);
+
+  // Marcar que o tutorial foi mostrado
+  tutorialShown = true;
+
+  // Esconder o botão de tutorial
+  document.getElementById('show-tutorial-btn').style.display = 'none';
+}
+
+// Função para fechar o tutorial
+function closeTutorial() {
+  document.getElementById('tutorial-container').style.display = 'none';
+}
+
+// Função para mostrar um modal personalizado
+function showCustomModal(content) {
+  // Criar o modal
+  const modal = document.createElement('div');
+  modal.className = 'modal animate__animated animate__fadeIn';
+
+  // Criar o conteúdo do modal
+  const modalContent = document.createElement('div');
+  modalContent.className = 'modal-content';
+  modalContent.style.maxWidth = '600px';
+  modalContent.style.maxHeight = '80vh';
+  modalContent.style.overflow = 'auto';
+  modalContent.innerHTML = content;
+
+  // Adicionar botão de fechar
+  const botaoFechar = document.createElement('button');
+  botaoFechar.className = 'btn confirm-btn';
+  botaoFechar.innerHTML = '<i class="fas fa-check"></i> Entendi';
+  botaoFechar.onclick = function() {
+    modal.classList.remove('animate__fadeIn');
+    modal.classList.add('animate__fadeOut');
+    setTimeout(() => {
+      modal.remove();
+    }, 500);
+  };
+  modalContent.appendChild(botaoFechar);
+
+  // Adicionar o conteúdo ao modal
+  modal.appendChild(modalContent);
+
+  // Adicionar o modal ao corpo do documento
+  document.body.appendChild(modal);
+
+  // Adicionar evento para fechar o modal ao clicar fora dele
+  modal.addEventListener('click', function(event) {
+    if (event.target === modal) {
+      modal.classList.remove('animate__fadeIn');
+      modal.classList.add('animate__fadeOut');
+      setTimeout(() => {
+        modal.remove();
+      }, 500);
+    }
+  });
+}
+
+// Função para alternar o modo de alto contraste
+function toggleHighContrast() {
+  highContrastMode = !highContrastMode;
+
+  if (highContrastMode) {
+    // Ativar modo de alto contraste
+    document.body.classList.add('high-contrast');
+
+    // Atualizar o texto do botão
+    const toggleBtn = document.getElementById('toggle-contrast-btn');
+    if (toggleBtn) {
+      toggleBtn.innerHTML = '<i class="fas fa-universal-access"></i><span>Contraste Normal</span>';
+      toggleBtn.style.backgroundColor = '#FFFFFF';
+    }
+
+    // Mostrar mensagem de confirmação
+    const alert = document.getElementById('alert');
+    if (alert) {
+      alert.textContent = "Modo de alto contraste ativado";
+      alert.classList.add('animate__fadeIn');
+      setTimeout(() => {
+        alert.classList.remove('animate__fadeIn');
+        alert.textContent = "";
+      }, 2000);
+    }
+  } else {
+    // Desativar modo de alto contraste
+    document.body.classList.remove('high-contrast');
+
+    // Atualizar o texto do botão
+    const toggleBtn = document.getElementById('toggle-contrast-btn');
+    if (toggleBtn) {
+      toggleBtn.innerHTML = '<i class="fas fa-universal-access"></i><span>Alto Contraste</span>';
+      toggleBtn.style.backgroundColor = 'var(--retro-yellow)';
+    }
+
+    // Mostrar mensagem de confirmação
+    const alert = document.getElementById('alert');
+    if (alert) {
+      alert.textContent = "Modo de contraste normal ativado";
+      alert.classList.add('animate__fadeIn');
+      setTimeout(() => {
+        alert.classList.remove('animate__fadeIn');
+        alert.textContent = "";
+      }, 2000);
+    }
+  }
 }

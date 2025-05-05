@@ -1,32 +1,41 @@
 :root {
-    /* Paleta de cores retrô de 32 bits */
-    --primary-color: #ff7f50;    /* Coral */
-    --primary-light: #ffa07a;    /* Light Salmon */
-    --primary-dark: #e86a45;     /* Dark Coral */
-    --secondary-color: #4169e1;  /* Royal Blue */
-    --secondary-light: #87cefa;  /* Light Sky Blue */
-    --secondary-dark: #1e3a8a;   /* Dark Royal Blue */
-    --accent-color: #32cd32;     /* Lime Green */
-    --accent-light: #90ee90;     /* Light Green */
-    --accent-dark: #228b22;      /* Forest Green */
-    --background-dark: #2a2a72;  /* Dark Blue */
-    --background-light: #4a4a9c; /* Medium Blue */
+    /* Paleta de cores retrô de 32 bits com contraste otimizado para acessibilidade */
+    --primary-color: #e05a2b;    /* Coral mais escuro com contraste WCAG AA */
+    --primary-light: #ff8c5a;    /* Light Salmon com melhor contraste */
+    --primary-dark: #c04020;     /* Dark Coral com alto contraste */
+    --secondary-color: #2850c0;  /* Royal Blue com contraste WCAG AA */
+    --secondary-light: #5a8cd0;  /* Light Sky Blue com melhor contraste */
+    --secondary-dark: #183070;   /* Dark Royal Blue com alto contraste */
+    --accent-color: #1a9e1a;     /* Lime Green com contraste WCAG AA */
+    --accent-light: #50c050;     /* Light Green com melhor contraste */
+    --accent-dark: #0a6b0a;      /* Forest Green com alto contraste */
+    --background-dark: #121250;  /* Dark Blue com alto contraste */
+    --background-light: #2a2a7c; /* Medium Blue com melhor contraste */
     --text-light: #ffffff;       /* White */
     --text-dark: #000000;        /* Black */
-    --success-color: #00ff00;    /* Green */
-    --warning-color: #ffff00;    /* Yellow */
-    --error-color: #ff0000;      /* Red */
-    --glass-bg: rgba(255, 255, 255, 0.2);
-    --glass-border: rgba(255, 255, 255, 0.4);
-    --glass-shadow: rgba(0, 0, 0, 0.2);
-    --card-bg: rgba(42, 42, 114, 0.8);
+    --success-color: #00aa00;    /* Green com contraste WCAG AA */
+    --warning-color: #d0b000;    /* Yellow com contraste WCAG AA */
+    --error-color: #bb0000;      /* Red com contraste WCAG AA */
+    --glass-bg: rgba(255, 255, 255, 0.3);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --glass-shadow: rgba(0, 0, 0, 0.4);
+    --card-bg: rgba(18, 18, 80, 0.95);
 
-    /* Cores adicionais retrô */
-    --retro-purple: #9932cc;     /* Dark Orchid */
-    --retro-pink: #ff69b4;       /* Hot Pink */
-    --retro-yellow: #ffd700;     /* Gold */
-    --retro-orange: #ff8c00;     /* Dark Orange */
-    --retro-cyan: #00ffff;       /* Cyan */
+    /* Cores adicionais retrô com contraste otimizado */
+    --retro-purple: #7020a0;     /* Dark Orchid com contraste WCAG AA */
+    --retro-pink: #d03090;       /* Hot Pink com contraste WCAG AA */
+    --retro-yellow: #d0b000;     /* Gold com contraste WCAG AA */
+    --retro-orange: #d06000;     /* Dark Orange com contraste WCAG AA */
+    --retro-cyan: #00a0a0;       /* Cyan com contraste WCAG AA */
+
+    /* Cores para pistas verdadeiras/falsas com alto contraste */
+    --true-color: #007700;       /* Verde escuro para pistas verdadeiras - WCAG AA */
+    --false-color: #990000;      /* Vermelho escuro para pistas falsas - WCAG AA */
+
+    /* Cores de foco e interação */
+    --focus-outline: #ffffff;    /* Contorno branco para elementos em foco */
+    --hover-overlay: rgba(255, 255, 255, 0.2); /* Overlay para hover */
+    --active-overlay: rgba(255, 255, 255, 0.3); /* Overlay para elementos ativos */
 }
 
 * {
@@ -51,6 +60,28 @@ body {
     color: var(--text-light);
     overflow-x: hidden;
     image-rendering: pixelated;
+}
+
+/* Classe de alto contraste para acessibilidade */
+.high-contrast {
+    --primary-color: #ff4500;    /* Coral mais brilhante */
+    --primary-light: #ff6347;    /* Tomato */
+    --primary-dark: #b22222;     /* Firebrick */
+    --secondary-color: #0000cd;  /* Medium Blue */
+    --secondary-light: #1e90ff;  /* Dodger Blue */
+    --secondary-dark: #00008b;   /* Dark Blue */
+    --accent-color: #008000;     /* Green */
+    --accent-light: #32cd32;     /* Lime Green */
+    --accent-dark: #006400;      /* Dark Green */
+    --background-dark: #000033;  /* Muito escuro para alto contraste */
+    --background-light: #000066; /* Azul escuro para alto contraste */
+    --text-light: #ffffff;       /* White */
+    --text-dark: #000000;        /* Black */
+    --success-color: #00ff00;    /* Lime */
+    --warning-color: #ffff00;    /* Yellow */
+    --error-color: #ff0000;      /* Red */
+    --true-color: #00cc00;       /* Verde brilhante */
+    --false-color: #cc0000;      /* Vermelho brilhante */
 }
 
 /* Adiciona um padrão de grade retrô */
@@ -192,11 +223,11 @@ body::after {
     display: flex;
     align-items: center;
     gap: 15px;
-    background: var(--retro-cyan);
+    /* O background será definido dinamicamente pelo JavaScript */
     padding: 15px 25px;
     border-radius: 0;
-    border: 3px solid var(--text-light);
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+    border: 4px solid var(--text-light);
+    box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
     max-width: 600px;
     position: relative;
     overflow: hidden;
@@ -230,9 +261,11 @@ body::after {
     font-size: 1.4rem;
     margin: 0;
     line-height: 1.6;
-    color: var(--text-dark);
-    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+    /* A cor será definida dinamicamente pelo JavaScript */
+    font-weight: bold;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.7); /* Sombra mais escura para melhor contraste */
     z-index: 1;
+    letter-spacing: 0.5px; /* Melhorar legibilidade */
 }
 
 .next-btn {
@@ -240,10 +273,10 @@ body::after {
     align-items: center;
     gap: 10px;
     padding: 15px 30px;
-    font-size: 1.2rem;
+    font-size: 1.5rem; /* Aumentado o tamanho da fonte */
     font-family: 'Press Start 2P', cursive;
     background: var(--retro-yellow);
-    border: 3px solid var(--text-dark);
+    border: 4px solid var(--text-dark); /* Borda mais grossa */
     border-radius: 0;
     color: var(--text-dark);
     cursor: pointer;
@@ -251,6 +284,20 @@ body::after {
     box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.8);
     position: relative;
     text-transform: uppercase;
+    min-width: 250px; /* Largura mínima para garantir que o texto apareça completo */
+    justify-content: center; /* Centraliza o texto horizontalmente */
+    font-weight: bold; /* Texto em negrito para melhor legibilidade */
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5); /* Sombra de texto para melhor contraste */
+    outline: none; /* Remove o outline padrão */
+}
+
+/* Adicionar outline quando em foco para acessibilidade */
+.next-btn:focus {
+    outline: 3px solid var(--focus-outline);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 2;
 }
 
 .next-btn::after {
@@ -287,8 +334,12 @@ body::after {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 30px 0;
+    margin: 30px auto; /* Centraliza horizontalmente */
     position: relative;
+    max-width: 1100px; /* Limita a largura máxima */
+    width: 100%; /* Ocupa toda a largura disponível até o max-width */
+    padding: 0 15px; /* Adiciona padding horizontal para evitar que o conteúdo fique muito próximo das bordas */
+    box-sizing: border-box; /* Garante que o padding não aumente a largura total */
 }
 
 /* Adiciona elementos decorativos ao redor do tabuleiro */
@@ -396,6 +447,8 @@ body::after {
     position: relative;
     overflow: hidden;
     transform: rotate(-1deg);
+    margin: 0 auto; /* Centraliza horizontalmente */
+    justify-content: center; /* Centraliza as colunas horizontalmente */
 }
 
 /* Adiciona uma borda interna estilo arcade */
@@ -440,13 +493,15 @@ body::after {
     gap: 15px;
     position: relative;
     z-index: 1;
+    width: 100%; /* Garante que todas as colunas tenham a mesma largura */
+    align-items: center; /* Centraliza os botões na coluna */
 }
 
 button {
-    width: 70px;
-    height: 70px;
+    width: 80px; /* Aumentado para acomodar melhor os números */
+    height: 80px; /* Aumentado para manter proporção */
     font-family: 'Press Start 2P', cursive;
-    font-size: 1.4rem;
+    font-size: 1.2rem; /* Reduzido para melhor acomodar números de 3 algarismos */
     background: var(--retro-pink);
     color: var(--text-dark);
     border: 3px solid var(--text-dark);
@@ -456,11 +511,30 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.7); /* Sombra mais escura para melhor contraste */
     position: relative;
     overflow: hidden;
     z-index: 1;
     transform: rotate(2deg);
+    text-align: center; /* Centraliza o texto */
+    min-width: 80px; /* Garante largura mínima consistente */
+    word-break: break-word; /* Permite quebra de palavras para números muito grandes */
+    padding: 5px; /* Adiciona um pouco de padding para números grandes */
+    line-height: 1; /* Reduz o espaçamento entre linhas para números fracionários */
+    font-weight: bold; /* Texto em negrito para melhor legibilidade */
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5); /* Sombra de texto para melhor contraste */
+
+    /* Adicionar outline quando em foco para acessibilidade */
+    outline: none;
+}
+
+/* Adicionar outline quando em foco para acessibilidade */
+button:focus {
+    outline: 3px solid var(--focus-outline);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 2;
 }
 
 /* Efeito de brilho nos botões */
@@ -511,41 +585,113 @@ button:nth-child(even) {
 }
 
 button.marked {
-    color: var(--text-light);
+    color: rgba(255, 255, 255, 0.3); /* Texto quase transparente para dar destaque ao X */
     text-decoration: line-through;
-    opacity: 0.8;
+    opacity: 0.9;
     transform: translate(4px, 4px) rotate(0);
     box-shadow: 0 0 0 rgba(0, 0, 0, 0.5);
     border-color: var(--text-light);
+    position: relative;
+    overflow: hidden;
 }
 
-/* Cores para cada pista */
+/* Adiciona um círculo branco semi-transparente atrás do X */
+button.marked::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85%; /* Tamanho relativo ao botão - um pouco maior para melhor visibilidade */
+    height: 85%; /* Tamanho relativo ao botão - um pouco maior para melhor visibilidade */
+    background-color: rgba(255, 255, 255, 0.8); /* Mais opaco para melhor visibilidade */
+    border-radius: 50%;
+    z-index: 9; /* Abaixo do X, mas acima do número */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); /* Sombra sutil para destacar */
+}
+
+/* Adiciona um X grande e vermelho sobre os números eliminados */
+button.marked::before {
+    content: "×"; /* Usando o caractere de multiplicação que é mais simétrico */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centraliza perfeitamente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4.5rem; /* Tamanho ainda maior para melhor visibilidade */
+    font-weight: bold;
+    color: #FF0000; /* Vermelho puro */
+    z-index: 10; /* Aumentado para garantir que fique acima de tudo */
+    text-shadow:
+        3px 3px 0 #000000,
+        -3px -3px 0 #000000,
+        3px -3px 0 #000000,
+        -3px 3px 0 #000000,
+        0px 3px 0 #000000,
+        0px -3px 0 #000000,
+        3px 0px 0 #000000,
+        -3px 0px 0 #000000; /* Contorno preto mais grosso para destacar em qualquer fundo */
+    animation: pulseX 1s infinite alternate;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    line-height: 0.8; /* Ajusta o alinhamento vertical do texto */
+    text-align: center; /* Garante alinhamento horizontal */
+}
+
+@keyframes pulseX {
+    from { opacity: 0.8; transform: translate(-50%, -50%) scale(1); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+/* Cores para cada pista com contraste otimizado para WCAG AA */
 button.marked.clue-0 {
-    background: var(--retro-purple);
+    background: #6A1B9A; /* Azul violeta com contraste WCAG AA */
+    border-color: #FFFFFF; /* Borda branca para melhor contraste */
 }
 
 button.marked.clue-1 {
-    background: var(--retro-pink);
+    background: #C2185B; /* Rosa profundo com contraste WCAG AA */
+    border-color: #FFFFFF; /* Borda branca para melhor contraste */
 }
 
 button.marked.clue-2 {
-    background: var(--retro-cyan);
+    background: #00695C; /* Ciano escuro com contraste WCAG AA */
+    border-color: #FFFFFF; /* Borda branca para melhor contraste */
 }
 
 button.marked.clue-3 {
-    background: var(--retro-yellow);
+    background: #996600; /* Dourado escuro com contraste WCAG AA */
+    border-color: #FFFFFF; /* Borda branca para melhor contraste */
 }
 
 button.marked.clue-4 {
-    background: var(--retro-orange);
+    background: #A04000; /* Chocolate com contraste WCAG AA */
+    border-color: #FFFFFF; /* Borda branca para melhor contraste */
 }
 
 button.marked.clue-5 {
-    background: var(--accent-color);
+    background: #1B5E20; /* Verde floresta com contraste WCAG AA */
+    border-color: #FFFFFF; /* Borda branca para melhor contraste */
 }
 
 button.marked.clue-6 {
-    background: var(--primary-color);
+    background: #8B0000; /* Vermelho tijolo com contraste WCAG AA */
+    border-color: #FFFFFF; /* Borda branca para melhor contraste */
+}
+
+/* Adiciona uma borda piscante vermelha para destacar ainda mais */
+button.marked {
+    animation: markedPulse 1s infinite;
+    border: 3px solid #FF0000; /* Borda vermelha */
+}
+
+@keyframes markedPulse {
+    0%, 100% { border-color: #FF0000; } /* Vermelho */
+    50% { border-color: #FFFFFF; } /* Branco */
 }
 
 button:hover:not(.marked):not(:disabled) {
@@ -567,10 +713,35 @@ button.pulse {
     animation: pixelPulse 0.3s steps(3);
 }
 
+button.blocked {
+    animation: blockShake 0.3s steps(2);
+    position: relative;
+}
+
+button.blocked::before {
+    content: "✋";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.8rem;
+    color: var(--error-color);
+    z-index: 10;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
 @keyframes pixelPulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.2); }
     100% { transform: scale(1); }
+}
+
+@keyframes blockShake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
 }
 
 /* Alert Styles */
@@ -611,6 +782,121 @@ button.pulse {
     opacity: 1;
 }
 
+/* Tooltip Styles */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+}
+
+.tooltip .tooltip-icon {
+    color: var(--retro-yellow);
+    font-size: 1.4rem; /* Tamanho maior para melhor visibilidade */
+    margin-left: 8px;
+    animation: pulse 1.5s infinite;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.7); /* Sombra para melhor contraste */
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.7)); /* Filtro adicional para melhor visibilidade */
+}
+
+.tooltip .tooltip-text {
+    visibility: hidden;
+    width: 300px;
+    background-color: var(--retro-purple);
+    color: var(--text-light);
+    text-align: center;
+    border-radius: 0;
+    border: 3px solid var(--text-light);
+    padding: 15px;
+    position: absolute;
+    z-index: 1001;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.7); /* Sombra mais escura para melhor contraste */
+    font-weight: bold; /* Texto em negrito para melhor legibilidade */
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.7); /* Sombra de texto para melhor contraste */
+    letter-spacing: 0.5px; /* Melhorar legibilidade */
+}
+
+.tooltip .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -10px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: var(--text-light) transparent transparent transparent;
+}
+
+.tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Tutorial Styles */
+.tutorial-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--retro-yellow);
+    border: 3px solid var(--text-dark);
+    border-radius: 0;
+    padding: 15px;
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: slideIn 0.5s forwards;
+}
+
+.tutorial-container h3 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: var(--text-dark);
+    text-align: center;
+}
+
+.tutorial-container p {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    margin-bottom: 15px;
+    color: var(--text-dark);
+    text-align: center;
+    line-height: 1.5;
+}
+
+.tutorial-container button {
+    background-color: var(--retro-purple);
+    color: var(--text-light);
+    border: 2px solid var(--text-light);
+    padding: 8px 15px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.tutorial-container button:hover {
+    background-color: var(--retro-cyan);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+    }
+    to {
+        transform: translateX(0);
+    }
+}
+
 /* Modal Styles */
 .modal {
     position: fixed;
@@ -629,7 +915,7 @@ button.pulse {
     background: var(--retro-purple);
     border-radius: 0;
     border: 4px solid var(--text-light);
-    box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.5);
+    box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.7); /* Sombra mais escura para melhor contraste */
     padding: 30px;
     width: 90%;
     max-width: 500px;
@@ -637,6 +923,7 @@ button.pulse {
     animation: pixelFadeIn 0.5s steps(5);
     position: relative;
     overflow: hidden;
+    color: var(--text-light); /* Garantir que o texto seja branco */
 }
 
 .modal-content::before {
@@ -661,7 +948,8 @@ button.pulse {
     font-size: 1.8rem;
     margin-bottom: 25px;
     color: var(--retro-yellow);
-    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.7); /* Sombra mais escura para melhor contraste */
+    letter-spacing: 1px; /* Melhorar legibilidade */
 }
 
 .modal-content p {
@@ -670,7 +958,8 @@ button.pulse {
     line-height: 1.8;
     margin-bottom: 25px;
     color: var(--text-light);
-    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.7); /* Sombra mais escura para melhor contraste */
+    letter-spacing: 0.5px; /* Melhorar legibilidade */
 }
 
 .modal-content .confirm-btn {
@@ -685,12 +974,24 @@ button.pulse {
     color: var(--text-dark);
     border: 3px solid var(--text-dark);
     border-radius: 0;
-    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.5);
+    box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.7); /* Sombra mais escura para melhor contraste */
     cursor: pointer;
     transition: all 0.1s ease;
     text-transform: uppercase;
     position: relative;
     z-index: 1;
+    font-weight: bold; /* Texto em negrito para melhor legibilidade */
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5); /* Sombra de texto para melhor contraste */
+    outline: none; /* Remove o outline padrão */
+}
+
+/* Adicionar outline quando em foco para acessibilidade */
+.modal-content .confirm-btn:focus {
+    outline: 3px solid var(--focus-outline);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 2;
 }
 
 .modal-content .confirm-btn::after {
@@ -1151,6 +1452,9 @@ body::after {
 
     .board {
         grid-template-columns: repeat(3, 1fr);
+        max-width: 800px; /* Reduz a largura máxima para telas menores */
+        margin: 0 auto; /* Mantém centralizado */
+        justify-content: center; /* Garante que as colunas estejam centralizadas */
     }
 
     #rule {
@@ -1162,14 +1466,34 @@ body::after {
     .board {
         grid-template-columns: repeat(3, 1fr);
         gap: 12px;
+        max-width: 600px; /* Reduz a largura máxima para telas menores */
+        padding: 20px; /* Reduz o padding */
+    }
+
+    .column {
+        align-items: center; /* Garante que os botões estejam centralizados */
     }
 
     button {
         width: 60px;
         height: 60px;
         font-size: 1.2rem;
+        min-width: 60px; /* Garante largura mínima consistente */
     }
 
+    /* Ajusta o tamanho do X para telas menores */
+    button.marked::before {
+        font-size: 3.5rem;
+    }
+
+    /* Ajusta o tamanho do círculo para telas menores */
+    button.marked::after {
+        width: 90%;
+        height: 90%;
+    }
+}
+
+@media (max-width: 768px) {
     .rule-container {
         padding: 12px 15px;
     }
@@ -1212,14 +1536,36 @@ body::after {
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
         padding: 15px;
+        max-width: 320px; /* Reduz a largura máxima para telas muito pequenas */
+        margin: 0 auto; /* Mantém centralizado */
+    }
+
+    .column {
+        align-items: center; /* Garante que os botões estejam centralizados */
+        width: 100%; /* Garante que as colunas ocupem toda a largura disponível */
     }
 
     button {
         width: 50px;
         height: 50px;
         font-size: 1rem;
+        min-width: 50px; /* Garante largura mínima consistente */
     }
 
+    /* Ajusta o tamanho do X para telas muito pequenas */
+    button.marked::before {
+        font-size: 3rem;
+        line-height: 0.7;
+    }
+
+    /* Ajusta o tamanho do círculo para telas muito pequenas */
+    button.marked::after {
+        width: 95%;
+        height: 95%;
+    }
+}
+
+@media (max-width: 480px) {
     .final-step, .end-game {
         padding: 20px;
     }
