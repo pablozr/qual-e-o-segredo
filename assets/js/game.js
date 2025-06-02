@@ -6,37 +6,37 @@ const ROUNDS = 7; // Alterado para 7 pistas
 // Conjunto fixo de 7 regras que serão usadas em todos os tabuleiros
 const FIXED_RULES = [
     {
-        texto: "Elimine números múltiplos de 4",
+        texto: "O número é múltiplo de 4",
         check: n => n % 4 === 0,
         isTrue: Math.random() < 0.3 // 30% de chance de ser verdadeira e 70% de ser falsa
     },
     {
-        texto: "Elimine números divisíveis por 5",
+        texto: "O número é divisível por 5",
         check: n => n % 5 === 0,
         isTrue: Math.random() < 0.3
     },
     {
-        texto: "Elimine números pares",
+        texto: "O número é par",
         check: n => n % 2 === 0,
         isTrue: Math.random() < 0.3
     },
     {
-        texto: "Elimine números que não são múltiplos de 3",
+        texto: "O número não é múltiplo de 3",
         check: n => n % 3 !== 0,
         isTrue: Math.random() < 0.3
     },
     {
-        texto: "Elimine números divisíveis por 9",
+        texto: "O número é divisível por 9",
         check: n => n % 9 === 0,
         isTrue: Math.random() < 0.3
     },
     {
-        texto: "Elimine números cujo resto da divisão por 5 é 2",
+        texto: "O resto da divisão do número por 5 é 2",
         check: n => n % 5 === 2,
         isTrue: Math.random() < 0.3
     },
     {
-        texto: "Elimine números cuja soma dos algarismos é ímpar",
+        texto: "A soma dos algarismos do número é ímpar",
         check: n => sumDigits(n) % 2 === 1,
         isTrue: Math.random() < 0.3
     }
@@ -49,12 +49,18 @@ let timerInterval = null; // Para armazenar o intervalo do timer
 let playerName = ''; // Para armazenar o nome do jogador
 let errorCount = 0; // Contador de erros por pista (resetado a cada pista)
 
-// Variáveis para controle de spam
+// Variáveis para controle de spam e tentativas aleatórias
 let lastClickTime = 0; // Último momento em que um número foi clicado
-let clickCooldown = 500; // Tempo mínimo entre cliques (em milissegundos)
+let clickCooldown = 800; // Tempo mínimo entre cliques (aumentado para 800ms)
 let clickCount = 0; // Contador de cliques em um curto período
 let clickCountResetTimeout = null; // Timeout para resetar o contador de cliques
 let isClickBlocked = false; // Flag para indicar se os cliques estão bloqueados
+
+// Controle de tentativas incorretas consecutivas
+let wrongAttemptsInRow = 0; // Tentativas erradas consecutivas
+let totalWrongAttempts = 0; // Total de tentativas erradas na pista atual
+let blockDuration = 3000; // Duração inicial do bloqueio (3 segundos)
+let maxWrongAttempts = 3; // Máximo de tentativas erradas antes de penalidade maior
 
 // Variável para controle do tutorial
 let tutorialShown = false;
@@ -119,6 +125,16 @@ async function startGameWithPlayerName() {
 // Função para inicializar o jogo
 async function initializeGame() {
     try {
+        // Resetar todas as variáveis do jogo
+        round = 0;
+        time = 0;
+        errorCount = 0;
+        wrongAttemptsInRow = 0;
+        totalWrongAttempts = 0;
+        clickCount = 0;
+        isClickBlocked = false;
+        lastClickTime = 0;
+
         // Atualizar a barra de progresso
         updateLoadingProgress(10, 'Inicializando o jogo...');
 
@@ -129,15 +145,15 @@ async function initializeGame() {
             }
         });
 
-        updateLoadingProgress(30, 'Processando regras...');
+        updateLoadingProgress(30, 'Processando protocolos de segurança...');
 
-        updateLoadingProgress(40, 'Gerando tabuleiro...');
+        updateLoadingProgress(40, 'Gerando matriz de códigos...');
 
         // Gerar o tabuleiro com tentativas até encontrar um válido
         let tentativas = 0;
         let tabuleiroValido = false;
 
-        updateLoadingProgress(40, 'Gerando tabuleiro com todas as pistas válidas...');
+        updateLoadingProgress(40, 'Validando códigos de segurança...');
 
         // Continuar tentando até encontrar um tabuleiro válido
         while (!tabuleiroValido) {
@@ -175,12 +191,12 @@ async function initializeGame() {
             }
         }
 
-        updateLoadingProgress(80, 'Gerando interface do jogo...');
+        updateLoadingProgress(80, 'Carregando interface de segurança...');
 
         // Gerar o tabuleiro na interface
         generateBoard();
 
-        updateLoadingProgress(90, 'Finalizando...');
+        updateLoadingProgress(90, 'Estabelecendo conexão segura...');
 
         // Exibir a primeira dica com o detetive indicando se é verdadeira ou falsa
         const regra = currentTabuleiro.regras[round];
@@ -230,7 +246,7 @@ async function initializeGame() {
             }
         }
 
-        updateLoadingProgress(100, 'Jogo pronto!');
+        updateLoadingProgress(100, 'Sistema bancário ativo!');
 
         // Iniciar o timer
         startTimer();
@@ -265,7 +281,7 @@ window.addEventListener('DOMContentLoaded', function() {
 function generateRandomTabuleiro() {
     // Definir valores de isTrue para as regras
     FIXED_RULES.forEach(rule => {
-        rule.isTrue = Math.random() < 0.5; // 50% de chance de ser verdadeira ou falsa
+        rule.isTrue = Math.random() < 0.3; // 30% de chance de ser verdadeira e 70% de ser falsa
     });
 
     // Gerar números aleatórios
@@ -281,14 +297,17 @@ function generateRandomTabuleiro() {
     // Aplicar cada regra para filtrar os números
     for (const regra of FIXED_RULES) {
         // Verificar quantos números seriam eliminados pela regra
+        // Se a regra é verdadeira, eliminamos números que NÃO se encaixam na descrição
+        // Se a regra é falsa, eliminamos números que SE encaixam na descrição
         const numerosEliminados = regra.isTrue ?
-            sobreviventes.filter(num => regra.check(num)) :
-            sobreviventes.filter(num => !regra.check(num));
+            sobreviventes.filter(num => !regra.check(num)) :
+            sobreviventes.filter(num => regra.check(num));
 
         // Verificar se o segredo seria eliminado
+        // O segredo é eliminado se NÃO se encaixa na descrição (quando verdadeira) ou se SE encaixa (quando falsa)
         const segredoEliminado = regra.isTrue ?
-            regra.check(segredo) :
-            !regra.check(segredo);
+            !regra.check(segredo) :
+            regra.check(segredo);
 
         // Se o segredo seria eliminado, retornar null
         if (segredoEliminado) {
@@ -301,13 +320,8 @@ function generateRandomTabuleiro() {
         }
 
         // Aplicar a regra
-        if (regra.isTrue) {
-            // Se a regra é verdadeira, eliminamos os números que atendem à regra
-            sobreviventes = sobreviventes.filter(num => !regra.check(num));
-        } else {
-            // Se a regra é falsa, eliminamos os números que NÃO atendem à regra
-            sobreviventes = sobreviventes.filter(num => regra.check(num));
-        }
+        // A lógica já está correta: eliminamos os números que foram identificados como "numerosEliminados"
+        sobreviventes = sobreviventes.filter(num => !numerosEliminados.includes(num));
 
         // Se já temos menos de 2 números, retornar null
         if (sobreviventes.length < 2) {
@@ -388,6 +402,8 @@ function generateFinalHints(segredo) {
 
     if (currentTabuleiro && currentTabuleiro.regras) {
       currentTabuleiro.regras.forEach(regra => {
+        // Se a regra é verdadeira, eliminamos números que NÃO se encaixam na descrição
+        // Se a regra é falsa, eliminamos números que SE encaixam na descrição
         if (regra.isTrue) {
           todosNumeros = todosNumeros.filter(num => !regra.check(num));
         } else {
@@ -541,21 +557,24 @@ function markNumber(event){
         clickCount++;
 
         // Se exceder o limite de cliques rápidos, bloquear temporariamente
-        if (clickCount >= 5) {
+        if (clickCount >= 3) { // Reduzido de 5 para 3
             isClickBlocked = true;
 
-            // Mostrar mensagem de aviso
-            showModal('Calma!', 'Você está clicando muito rápido! Pense antes de clicar. Os cliques serão bloqueados por alguns segundos.');
+            // Aumentar duração do bloqueio baseado no número de tentativas erradas
+            const currentBlockDuration = blockDuration + (wrongAttemptsInRow * 2000); // +2s por tentativa errada
 
-            // Desbloquear após 3 segundos
+            // Mostrar mensagem de aviso mais específica
+            showModal('🛑 Pare e Pense!',
+                `Você está clicando muito rápido! Isso parece tentativa aleatória.
+                Analise a pista com cuidado antes de clicar.
+                Bloqueio por ${Math.ceil(currentBlockDuration/1000)} segundos.`);
+
+            // Desbloquear após o tempo calculado
             setTimeout(() => {
                 isClickBlocked = false;
                 clickCount = 0;
-                document.getElementById('alert').textContent = "Cliques desbloqueados. Pense antes de clicar!";
-                setTimeout(() => {
-                    document.getElementById('alert').textContent = "";
-                }, 2000);
-            }, 3000);
+                showAlert("🔓 Cliques liberados. Lembre-se: qualidade > velocidade!", 3000);
+            }, currentBlockDuration);
 
             return;
         }
@@ -577,7 +596,9 @@ function markNumber(event){
     const regra = currentTabuleiro.regras[round];
 
     // Verificar se a regra é verdadeira ou falsa e aplicar a lógica correspondente
-    const shouldMark = regra.isTrue ? regra.check(numero) : !regra.check(numero);
+    // Se a regra é verdadeira, eliminamos números que NÃO se encaixam na descrição
+    // Se a regra é falsa, eliminamos números que SE encaixam na descrição
+    const shouldMark = regra.isTrue ? !regra.check(numero) : regra.check(numero);
 
     if(shouldMark){
         btn.classList.add('marked');
@@ -586,12 +607,36 @@ function markNumber(event){
         btn.classList.add('pulse');
         btn.disabled = true; // Não deixa clicar novamente
         setTimeout(()=>btn.classList.remove('pulse'),300);
+
+        // Clique correto - resetar contador de tentativas erradas consecutivas
+        wrongAttemptsInRow = 0;
     }else{
-        // Incrementar o contador de erros
+        // Incrementar contadores de erro
         errorCount++;
+        wrongAttemptsInRow++;
+        totalWrongAttempts++;
 
         btn.classList.add('shake');
         document.getElementById('alert').textContent="Número não atende a regra!";
+
+        // Aplicar penalidades progressivas por tentativas incorretas consecutivas
+        if (wrongAttemptsInRow >= maxWrongAttempts) {
+            isClickBlocked = true;
+            const penaltyDuration = 5000 + (wrongAttemptsInRow - maxWrongAttempts) * 3000; // 5s + 3s por tentativa extra
+
+            showModal('🚫 Muitas Tentativas Incorretas!',
+                `Você errou ${wrongAttemptsInRow} vezes seguidas!
+                Isso sugere tentativas aleatórias.
+                Bloqueio por ${Math.ceil(penaltyDuration/1000)} segundos.
+                Use este tempo para analisar a pista com cuidado.`);
+
+            setTimeout(() => {
+                isClickBlocked = false;
+                showAlert("🎯 Foque na lógica da pista antes de clicar!", 4000);
+            }, penaltyDuration);
+
+            return;
+        }
 
         // Registrar erro na pista no banco de dados
         if (regra.id) {
@@ -613,9 +658,9 @@ function markNumber(event){
                 // Criar uma mensagem específica para a pista atual
                 let mensagem = 'Preste atenção na veracidade desta pista!';
                 if (regra.isTrue) {
-                    mensagem += ' Esta pista é VERDADEIRA, então você deve marcar os números que atendem à regra.';
+                    mensagem += ' Esta pista é VERDADEIRA, então você deve marcar os números que NÃO se encaixam na descrição (pois o segredo se encaixa).';
                 } else {
-                    mensagem += ' Esta pista é FALSA, então você deve marcar os números que NÃO atendem à regra.';
+                    mensagem += ' Esta pista é FALSA, então você deve marcar os números que SE encaixam na descrição (pois o segredo não se encaixa).';
                 }
                 showModal('Atenção!', mensagem);
             }, 600);
@@ -626,25 +671,25 @@ function markNumber(event){
                 let mensagemDica = 'Dica: ';
 
                 // Analisar o texto da regra para determinar o tipo de dica a ser dada
-                if (regra.texto.includes("múltiplos de 4")) {
+                if (regra.texto.includes("múltiplo de 4")) {
                     mensagemDica += "Um número é múltiplo de 4 quando seus dois últimos dígitos formam um número divisível por 4.";
                 }
-                else if (regra.texto.includes("divisíveis por 5")) {
+                else if (regra.texto.includes("divisível por 5")) {
                     mensagemDica += "Um número é divisível por 5 quando termina em 0 ou 5.";
                 }
-                else if (regra.texto.includes("números pares")) {
+                else if (regra.texto.includes("é par")) {
                     mensagemDica += "Números pares são aqueles que terminam em 0, 2, 4, 6 ou 8.";
                 }
-                else if (regra.texto.includes("múltiplos de 3")) {
+                else if (regra.texto.includes("múltiplo de 3")) {
                     mensagemDica += "Um número é múltiplo de 3 quando a soma de seus algarismos é divisível por 3.";
                 }
-                else if (regra.texto.includes("divisíveis por 9")) {
+                else if (regra.texto.includes("divisível por 9")) {
                     mensagemDica += "Um número é divisível por 9 quando a soma de seus algarismos é divisível por 9.";
                 }
-                else if (regra.texto.includes("resto da divisão por 5 é 2")) {
+                else if (regra.texto.includes("resto da divisão")) {
                     mensagemDica += "Números que terminam em 2 ou 7 têm resto 2 quando divididos por 5.";
                 }
-                else if (regra.texto.includes("soma dos algarismos é ímpar")) {
+                else if (regra.texto.includes("soma dos algarismos")) {
                     mensagemDica += "Para saber se a soma dos algarismos é ímpar, some todos os dígitos e veja se o resultado termina em 1, 3, 5, 7 ou 9.";
                 }
                 else {
@@ -726,7 +771,9 @@ function verificarSeExistemNumerosParaMarcar(roundIndex) {
     for (let i = 0; i < numerosNaoMarcados.length; i++) {
         const numero = parseInt(numerosNaoMarcados[i].textContent);
         // Considerar se a regra é verdadeira ou falsa
-        const shouldMark = regra.isTrue ? regra.check(numero) : !regra.check(numero);
+        // Se a regra é verdadeira, eliminamos números que NÃO se encaixam na descrição
+        // Se a regra é falsa, eliminamos números que SE encaixam na descrição
+        const shouldMark = regra.isTrue ? !regra.check(numero) : regra.check(numero);
         if (shouldMark) {
             encontrouNumeroParaMarcar = true;
             break;
@@ -754,8 +801,10 @@ function avancarParaProximaPistaValida() {
     // Atualizar o round e a interface
     round = proximoRound;
 
-    // Resetar o contador de erros ao avançar para uma nova pista
+    // Resetar os contadores de erros ao avançar para uma nova pista
     errorCount = 0;
+    totalWrongAttempts = 0;
+    // Não resetar wrongAttemptsInRow para manter penalidade entre pistas
 
     if (round < ROUNDS) {
         // Ainda temos pistas válidas
@@ -937,7 +986,7 @@ function checkFinalNumbers(){
   currentTabuleiro.dicasFinais.forEach(d=>hints.innerHTML+=`<p>${d}</p>`);
 
   // Atualizar o texto da regra
-  document.getElementById('rule').textContent = "Descubra o segredo!";
+  document.getElementById('rule').textContent = "Descubra o código de acesso!";
 }
 
 function finishGame(){
@@ -1010,11 +1059,30 @@ function finishGame(){
     sInp.style.transform='scale(1.2)';
     setTimeout(()=>window.location.href='end.html',500);
   }else{
-    // Incrementar o contador de erros
+    // Incrementar contadores de erro
     errorCount++;
+    wrongAttemptsInRow++;
 
     sInp.classList.add('shake');
     document.getElementById('alert').textContent="Errado! Tente novamente.";
+
+    // Aplicar penalidades por tentativas incorretas na fase final
+    if (wrongAttemptsInRow >= 2) { // Mais rigoroso na fase final
+        isClickBlocked = true;
+        const penaltyDuration = 4000 + (wrongAttemptsInRow - 2) * 2000; // 4s + 2s por tentativa extra
+
+        showModal('🔒 Tentativas Excessivas!',
+            `Você errou ${wrongAttemptsInRow} vezes!
+            Pare de chutar e analise as dicas finais com cuidado.
+            Bloqueio por ${Math.ceil(penaltyDuration/1000)} segundos.`);
+
+        setTimeout(() => {
+            isClickBlocked = false;
+            showAlert("💡 Use as dicas finais para deduzir o número!", 4000);
+        }, penaltyDuration);
+
+        return;
+    }
 
     // Verificar o número de erros e mostrar mensagens apropriadas
     if (errorCount === 1) {
@@ -1101,11 +1169,13 @@ function verificarTodasPistasTemNumerosParaMarcar(tabuleiro) {
     const regra = tabuleiro.regras[i];
 
     // Verificar se a regra tem números para marcar nos números restantes
+    // Se a regra é verdadeira, marcamos números que NÃO se encaixam na descrição
+    // Se a regra é falsa, marcamos números que SE encaixam na descrição
     let numerosParaMarcar = [];
     if (regra.isTrue) {
-      numerosParaMarcar = nums.filter(num => regra.check(num));
-    } else {
       numerosParaMarcar = nums.filter(num => !regra.check(num));
+    } else {
+      numerosParaMarcar = nums.filter(num => regra.check(num));
     }
 
     // Se não há números para marcar com esta regra, o tabuleiro não é válido
@@ -1114,11 +1184,8 @@ function verificarTodasPistasTemNumerosParaMarcar(tabuleiro) {
     }
 
     // Aplicar a regra para obter os números restantes para a próxima regra
-    if (regra.isTrue) {
-      nums = nums.filter(num => !regra.check(num));
-    } else {
-      nums = nums.filter(num => regra.check(num));
-    }
+    // Os números que sobrevivem são os que NÃO foram marcados
+    nums = nums.filter(num => !numerosParaMarcar.includes(num));
   }
 
   // Se chegamos até aqui, todas as pistas têm números para marcar
@@ -1140,10 +1207,12 @@ function isSolucionavel(tabuleiro){
 
     // Verificar se a regra tem números para marcar
     let numerosParaMarcar = [];
+    // Se a regra é verdadeira, marcamos números que NÃO se encaixam na descrição
+    // Se a regra é falsa, marcamos números que SE encaixam na descrição
     if (regra.isTrue) {
-      numerosParaMarcar = nums.filter(num => regra.check(num));
-    } else {
       numerosParaMarcar = nums.filter(num => !regra.check(num));
+    } else {
+      numerosParaMarcar = nums.filter(num => regra.check(num));
     }
 
     // Se não há números para marcar com esta regra, o tabuleiro não é solucionável
@@ -1151,24 +1220,22 @@ function isSolucionavel(tabuleiro){
       return false;
     }
 
-    // Considerar se a regra é verdadeira ou falsa
+    // Verificar se o segredo sobrevive após aplicar esta regra
+    // O segredo deve sobreviver (não ser eliminado)
     if (regra.isTrue) {
-      // Se a regra é verdadeira e o segredo seria eliminado, o tabuleiro não é solucionável
-      if (regra.check(tabuleiro.segredo)) {
-        return false;
-      }
-
-      // Filtrar os números que sobrevivem
-      nums = nums.filter(num => !regra.check(num));
-    } else {
-      // Se a regra é falsa e o segredo não seria eliminado pela regra original, o tabuleiro não é solucionável
+      // Se a regra é verdadeira, o segredo sobrevive se SE ENCAIXA na descrição
       if (!regra.check(tabuleiro.segredo)) {
         return false;
       }
-
-      // Filtrar os números que sobrevivem (aplicando a negação da regra)
-      nums = nums.filter(num => regra.check(num));
+    } else {
+      // Se a regra é falsa, o segredo sobrevive se NÃO SE ENCAIXA na descrição
+      if (regra.check(tabuleiro.segredo)) {
+        return false;
+      }
     }
+
+    // Filtrar os números que sobrevivem (removendo os que foram marcados)
+    nums = nums.filter(num => !numerosParaMarcar.includes(num));
 
     // Verificação antecipada: se já temos menos de 2 números, o tabuleiro não é solucionável
     if (nums.length < 2) {
@@ -1246,6 +1313,18 @@ function showModal(titulo, mensagem) {
   });
 }
 
+// Função para mostrar alertas temporários
+function showAlert(message, duration = 3000) {
+    const alertElement = document.getElementById('alert');
+    alertElement.textContent = message;
+    alertElement.style.opacity = '1';
+
+    setTimeout(() => {
+        alertElement.textContent = "";
+        alertElement.style.opacity = '0';
+    }, duration);
+}
+
 // Função para mostrar o tutorial
 function showTutorial() {
   // Conteúdo do tutorial
@@ -1259,15 +1338,15 @@ function showTutorial() {
       <i class="fas fa-check-circle" style="color: #FFFFFF; margin-right: 10px;"></i>
       <span style="color: #FFFFFF; font-weight: bold;">VERDADEIRA</span>
     </div>
-    <p>Se a pista for VERDADEIRA, você deve eliminar os números que ATENDEM à regra.</p>
-    <p>Exemplo: Se a pista for "Elimine números pares" e for VERDADEIRA, você deve marcar todos os números pares (2, 4, 6, etc.).</p>
+    <p>Se a pista for VERDADEIRA, você deve eliminar os números que NÃO SE ENCAIXAM na descrição.</p>
+    <p>Exemplo: Se a pista for "O número é par" e for VERDADEIRA, você deve marcar todos os números ímpares (1, 3, 5, etc.), pois o segredo é par.</p>
 
     <div style="display: flex; align-items: center; margin: 15px 0; background-color: var(--false-color); padding: 10px; border-radius: 5px;">
       <i class="fas fa-times-circle" style="color: #FFFFFF; margin-right: 10px;"></i>
       <span style="color: #FFFFFF; font-weight: bold;">FALSA</span>
     </div>
-    <p>Se a pista for FALSA, você deve eliminar os números que NÃO ATENDEM à regra.</p>
-    <p>Exemplo: Se a pista for "Elimine números pares" e for FALSA, você deve marcar todos os números ímpares (1, 3, 5, etc.).</p>
+    <p>Se a pista for FALSA, você deve eliminar os números que SE ENCAIXAM na descrição.</p>
+    <p>Exemplo: Se a pista for "O número é par" e for FALSA, você deve marcar todos os números pares (2, 4, 6, etc.), pois o segredo é ímpar.</p>
 
     <h3>Objetivo do Jogo</h3>
     <p>Após aplicar todas as 7 pistas, restarão apenas 2 números. Use as dicas finais para descobrir qual é o número secreto.</p>

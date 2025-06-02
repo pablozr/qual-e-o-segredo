@@ -193,7 +193,7 @@ body::after {
 }
 
 h1 {
-    font-size: 2.5rem;
+    font-size: 3.5rem;
     margin-bottom: 30px;
     text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
     color: var(--retro-yellow);
@@ -229,7 +229,7 @@ h1 i {
 }
 
 h3 {
-    font-size: 1.4rem;
+    font-size: 2rem;
     margin-bottom: 30px;
     color: var(--retro-cyan);
     text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
@@ -286,7 +286,7 @@ h3 {
 }
 
 p {
-    font-size: 1rem;
+    font-size: 1.4rem;
     max-width: 600px;
     margin: 20px auto;
     line-height: 1.8;
@@ -355,7 +355,7 @@ p {
 }
 
 .mission-item span {
-    font-size: 0.9rem;
+    font-size: 1.3rem;
     color: var(--text-dark);
     text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3);
     position: relative;
@@ -380,8 +380,8 @@ p {
     align-items: center;
     justify-content: center;
     gap: 15px;
-    padding: 15px 30px;
-    font-size: 1.2rem;
+    padding: 20px 40px;
+    font-size: 1.6rem;
     font-family: 'Press Start 2P', cursive;
     background: var(--retro-yellow);
     color: var(--text-dark);
@@ -436,8 +436,8 @@ p {
     background: var(--retro-pink);
     color: var(--text-light);
     border-color: var(--text-light);
-    font-size: 1.4rem;
-    padding: 20px 40px;
+    font-size: 2rem;
+    padding: 25px 50px;
 }
 
 #intro .btn:hover {
@@ -457,15 +457,15 @@ p {
     }
 
     h1 {
-        font-size: 1.8rem;
+        font-size: 2.5rem;
     }
 
     h3 {
-        font-size: 1.2rem;
+        font-size: 1.6rem;
     }
 
     p {
-        font-size: 0.9rem;
+        font-size: 1.2rem;
         line-height: 1.6;
     }
 
@@ -479,14 +479,18 @@ p {
         justify-content: center;
     }
 
+    .mission-item span {
+        font-size: 1.1rem;
+    }
+
     .btn {
-        padding: 12px 25px;
-        font-size: 1rem;
+        padding: 15px 30px;
+        font-size: 1.3rem;
     }
 
     #intro .btn {
-        font-size: 1.2rem;
-        padding: 15px 30px;
+        font-size: 1.6rem;
+        padding: 20px 40px;
     }
 }
 
@@ -497,10 +501,14 @@ p {
     }
 
     h1 {
-        font-size: 1.4rem;
+        font-size: 2rem;
     }
 
     h3 {
+        font-size: 1.4rem;
+    }
+
+    p {
         font-size: 1rem;
     }
 
@@ -517,21 +525,21 @@ p {
     }
 
     .mission-item span {
-        font-size: 0.8rem;
+        font-size: 1rem;
     }
 
     .btn {
-        padding: 10px 15px;
-        font-size: 0.8rem;
+        padding: 12px 20px;
+        font-size: 1.1rem;
         gap: 8px;
     }
 
     #intro .btn {
-        font-size: 1rem;
-        padding: 12px 20px;
+        font-size: 1.4rem;
+        padding: 15px 25px;
     }
 
     .btn i {
-        font-size: 1rem;
+        font-size: 1.2rem;
     }
 }

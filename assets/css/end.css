@@ -160,7 +160,7 @@ body::after {
 }
 
 h1 {
-    font-size: 2.5rem;
+    font-size: 3.5rem;
     margin-bottom: 30px;
     text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
     color: var(--retro-yellow);
@@ -196,7 +196,7 @@ h1 i {
 }
 
 .message {
-    font-size: 1.2rem;
+    font-size: 1.6rem;
     max-width: 500px;
     margin: 25px auto;
     line-height: 1.8;
@@ -205,7 +205,7 @@ h1 i {
     position: relative;
     z-index: 1;
     background: rgba(0, 0, 0, 0.2);
-    padding: 15px;
+    padding: 20px;
     border-left: 4px solid var(--retro-cyan);
 }
 
@@ -272,7 +272,7 @@ h1 i {
 }
 
 .time-label {
-    font-size: 0.8rem;
+    font-size: 1.1rem;
     text-transform: uppercase;
     letter-spacing: 1px;
     margin-bottom: 8px;
@@ -282,7 +282,7 @@ h1 i {
 
 .tempo {
     font-family: 'Press Start 2P', cursive;
-    font-size: 2rem;
+    font-size: 2.6rem;
     color: var(--text-dark);
     text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3);
 }
@@ -297,8 +297,8 @@ h1 i {
     align-items: center;
     justify-content: center;
     gap: 15px;
-    padding: 15px 30px;
-    font-size: 1.2rem;
+    padding: 20px 40px;
+    font-size: 1.6rem;
     font-family: 'Press Start 2P', cursive;
     background: var(--retro-yellow);
     color: var(--text-dark);
@@ -353,8 +353,8 @@ h1 i {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    padding: 12px 25px;
-    font-size: 1rem;
+    padding: 16px 32px;
+    font-size: 1.3rem;
     font-family: 'Press Start 2P', cursive;
     background: var(--retro-cyan);
     color: var(--text-dark);
@@ -468,21 +468,26 @@ h1 i {
     }
 
     h1 {
-        font-size: 1.8rem;
+        font-size: 2.5rem;
     }
 
     .message {
-        font-size: 1rem;
+        font-size: 1.3rem;
         line-height: 1.6;
     }
 
     .tempo {
-        font-size: 1.6rem;
+        font-size: 2.2rem;
     }
 
     .btn {
-        padding: 12px 25px;
-        font-size: 1rem;
+        padding: 16px 32px;
+        font-size: 1.3rem;
+    }
+
+    .home-btn {
+        padding: 14px 28px;
+        font-size: 1.1rem;
     }
 
     .time-container {
@@ -497,7 +502,7 @@ h1 i {
     }
 
     h1 {
-        font-size: 1.4rem;
+        font-size: 2rem;
     }
 
     .fireworks {
@@ -506,8 +511,8 @@ h1 i {
     }
 
     .message {
-        font-size: 0.8rem;
-        padding: 10px;
+        font-size: 1.1rem;
+        padding: 15px;
     }
 
     .time-container {
@@ -516,25 +521,31 @@ h1 i {
     }
 
     .time-container i {
-        font-size: 1.4rem;
+        font-size: 1.8rem;
     }
 
     .time-label {
-        font-size: 0.6rem;
+        font-size: 0.9rem;
     }
 
     .tempo {
-        font-size: 1.4rem;
+        font-size: 1.8rem;
     }
 
-    .btn, .home-btn {
-        padding: 10px 15px;
-        font-size: 0.8rem;
+    .btn {
+        padding: 14px 20px;
+        font-size: 1.1rem;
+        gap: 8px;
+    }
+
+    .home-btn {
+        padding: 12px 18px;
+        font-size: 1rem;
         gap: 8px;
     }
 
     .btn i, .home-btn i {
-        font-size: 1rem;
+        font-size: 1.2rem;
     }
 
     .container::before,

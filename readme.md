@@ -25,15 +25,15 @@ SUPABASE_KEY=sua-chave-anon-do-supabase
 
 ## Funcionalidades
 
-- **Dicas Verdadeiras ou Falsas**: Um detetive indica se a dica é verdadeira ou falsa. Se for falsa, você deve fazer o oposto do que a dica sugere.
+- **Pistas Verdadeiras ou Falsas**: Um detetive indica se a pista é verdadeira ou falsa. Se for verdadeira, elimine números que não se encaixam na descrição. Se for falsa, elimine números que se encaixam na descrição.
 - **Estatísticas de Erros**: O jogo registra em quais pistas os jogadores mais erram.
 - **Tempo de Conclusão**: O tempo que cada jogador leva para finalizar o jogo é registrado.
 
 ## Como Jogar
 
-1. Elimine números com base nas pistas fornecidas.
-2. Se a pista for verdadeira, siga-a normalmente.
-3. Se a pista for falsa, faça o oposto do que ela sugere.
+1. Analise as pistas sobre as características do número secreto.
+2. Se a pista for verdadeira, elimine números que não se encaixam na descrição.
+3. Se a pista for falsa, elimine números que se encaixam na descrição.
 4. Continue até restarem apenas 2 números.
 5. Use as dicas finais para descobrir qual é o número secreto.
 
