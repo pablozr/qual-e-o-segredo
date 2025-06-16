@@ -1,48 +1,1057 @@
 // Configurações do jogo
-const NUMEROS_TOTAL = 30;
-const COLUNAS = 5;
-const ROUNDS = 7; // Alterado para 7 pistas
+const NUMEROS_TOTAL = 36; // Alterado para 36 (6x6 como nos tabuleiros do PDF)
+const COLUNAS = 6; // Alterado para 6 colunas
+const ROUNDS = 7; // 7 pistas fixas
 
-// Conjunto fixo de 7 regras que serão usadas em todos os tabuleiros
-const FIXED_RULES = [
+// Conjunto fixo de 7 regras base (o valor isTrue será definido por tabuleiro)
+const FIXED_RULES_BASE = [
     {
-        texto: "O número é múltiplo de 4",
-        check: n => n % 4 === 0,
-        isTrue: Math.random() < 0.3 // 30% de chance de ser verdadeira e 70% de ser falsa
+        texto: "O número não é múltiplo de 4",
+        check: n => n % 4 !== 0
     },
     {
-        texto: "O número é divisível por 5",
-        check: n => n % 5 === 0,
-        isTrue: Math.random() < 0.3
+        texto: "O número não é divisível por 5",
+        check: n => n % 5 !== 0
     },
     {
-        texto: "O número é par",
-        check: n => n % 2 === 0,
-        isTrue: Math.random() < 0.3
+        texto: "O número não é par",
+        check: n => n % 2 !== 0
     },
     {
-        texto: "O número não é múltiplo de 3",
-        check: n => n % 3 !== 0,
-        isTrue: Math.random() < 0.3
+        texto: "O número é múltiplo de 3",
+        check: n => n % 3 === 0
     },
     {
-        texto: "O número é divisível por 9",
-        check: n => n % 9 === 0,
-        isTrue: Math.random() < 0.3
+        texto: "O número não é divisível por 9",
+        check: n => n % 9 !== 0
     },
     {
-        texto: "O resto da divisão do número por 5 é 2",
-        check: n => n % 5 === 2,
-        isTrue: Math.random() < 0.3
+        texto: "O resto da divisão por 5 é 2",
+        check: n => n % 5 === 2
     },
     {
-        texto: "A soma dos algarismos do número é ímpar",
-        check: n => sumDigits(n) % 2 === 1,
-        isTrue: Math.random() < 0.3
+        texto: "A soma dos algarismos é ímpar",
+        check: n => sumDigits(n) % 2 === 1
+    }
+];
+
+// Tabuleiros do PDF - Todos os 91 tabuleiros
+const TABULEIROS_PDF = [
+    {
+        id: 1,
+        numeros: [729, 662, 807, 979, 890, 246, 933, 491, 88, 327, 846, 271, 157, 698, 375, 617, 367, 546, 847, 695, 794, 870, 880, 163, 201, 124, 125, 906, 407, 424, 380, 447, 144, 408, 665, 404],
+        candidatos: [447, 807],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 10"
+        ],
+        segredo: 447,
+        pistasVerdadeiras: [true, true, true, true, true, true, true] // Todas verdadeiras como no PDF original
+    },
+    {
+        id: 2,
+        numeros: [659, 94, 42, 30, 583, 267, 236, 799, 522, 376, 541, 402, 255, 867, 99, 476, 16, 850, 571, 713, 645, 474, 892, 765, 876, 507, 768, 780, 953, 606, 123, 939, 210, 121, 977, 842],
+        candidatos: [267, 867],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 1"
+        ],
+        segredo: 267,
+        pistasVerdadeiras: [false, true, false, true, false, true, true] // Variação para tornar mais interessante
+    },
+    {
+        id: 3,
+        numeros: [838, 249, 904, 254, 589, 700, 950, 628, 825, 277, 708, 120, 237, 962, 878, 130, 50, 82, 481, 418, 703, 569, 169, 480, 642, 807, 79, 928, 663, 267, 241, 253, 495, 250, 148, 783],
+        candidatos: [267, 807],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 9"
+        ],
+        segredo: 807,
+        pistasVerdadeiras: [true, false, true, false, true, false, true]
+    },
+    {
+        id: 4,
+        numeros: [504, 524, 364, 652, 360, 336, 748, 152, 325, 310, 985, 255, 90, 850, 586, 422, 866, 914, 378, 626, 82, 779, 131, 1, 907, 713, 467, 869, 683, 887, 819, 651, 741, 237, 177, 357],
+        candidatos: [177, 357],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 6"
+        ],
+        segredo: 177,
+        pistasVerdadeiras: [false, false, true, true, false, true, false]
+    },
+    {
+        id: 5,
+        numeros: [195, 117, 602, 74, 643, 512, 366, 449, 811, 267, 633, 494, 926, 430, 215, 960, 913, 425, 244, 164, 349, 820, 453, 806, 30, 490, 296, 502, 283, 128, 77, 472, 113, 701, 717, 57],
+        candidatos: [267, 717],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 14"
+        ],
+        segredo: 717,
+        pistasVerdadeiras: [true, true, false, false, true, true, false]
+    },
+    {
+        id: 6,
+        numeros: [690, 427, 489, 484, 173, 552, 547, 395, 306, 537, 706, 327, 181, 50, 658, 793, 751, 982, 972, 18, 735, 455, 104, 176, 558, 583, 207, 810, 202, 220, 597, 988, 631, 7, 172, 849],
+        candidatos: [537, 597],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 5"
+        ],
+        segredo: 537,
+        pistasVerdadeiras: [false, false, false, true, true, true, true]
+    },
+    {
+        id: 7,
+        numeros: [498, 729, 661, 716, 515, 61, 59, 258, 123, 842, 290, 532, 672, 765, 897, 224, 231, 617, 267, 198, 830, 702, 461, 976, 870, 965, 354, 767, 587, 580, 989, 986, 227, 687, 448, 160],
+        candidatos: [267, 687],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 3"
+        ],
+        segredo: 687,
+        pistasVerdadeiras: [true, false, true, true, false, false, true]
+    },
+    {
+        id: 8,
+        numeros: [417, 822, 178, 662, 247, 996, 537, 242, 933, 827, 579, 881, 878, 470, 550, 691, 616, 319, 708, 754, 531, 970, 280, 65, 15, 357, 944, 92, 620, 977, 294, 43, 107, 569, 352, 835],
+        candidatos: [357, 537],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 15"
+        ],
+        segredo: 357,
+        pistasVerdadeiras: [false, true, false, false, true, true, false]
+    },
+    {
+        id: 9,
+        numeros: [712, 714, 175, 368, 980, 863, 332, 285, 281, 145, 984, 778, 963, 342, 696, 807, 563, 578, 787, 798, 601, 560, 357, 723, 998, 301, 947, 910, 520, 451, 471, 895, 825, 91, 987, 682],
+        candidatos: [357, 807],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 9"
+        ],
+        segredo: 807,
+        pistasVerdadeiras: [true, true, true, false, false, true, false]
+    },
+    {
+        id: 10,
+        numeros: [941, 321, 880, 784, 350, 4, 226, 733, 57, 718, 475, 445, 997, 536, 856, 267, 704, 909, 462, 663, 186, 341, 134, 613, 828, 790, 902, 899, 83, 727, 894, 165, 653, 284, 125, 87],
+        candidatos: [87, 267],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 1"
+        ],
+        segredo: 267,
+        pistasVerdadeiras: [false, false, true, false, true, false, true]
+    },
+    {
+        id: 11,
+        numeros: [843, 135, 859, 151, 514, 541, 315, 510, 840, 140, 764, 263, 211, 450, 213, 886, 990, 468, 898, 627, 171, 836, 938, 222, 482, 760, 763, 452, 87, 479, 929, 670, 566, 697, 252, 507],
+        candidatos: [87, 627],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 0"
+        ],
+        segredo: 627
+    },
+    {
+        id: 12,
+        numeros: [493, 698, 433, 939, 373, 402, 64, 240, 464, 804, 286, 782, 717, 715, 667, 788, 159, 10, 418, 174, 397, 783, 375, 632, 144, 241, 335, 885, 287, 605, 237, 49, 807, 654, 316, 553],
+        candidatos: [717, 807],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 14"
+        ],
+        segredo: 717
+    },
+    {
+        id: 13,
+        numeros: [454, 594, 177, 513, 292, 509, 805, 867, 79, 759, 647, 170, 571, 24, 987, 97, 334, 786, 330, 312, 398, 372, 215, 126, 875, 930, 669, 936, 596, 428, 407, 534, 871, 212, 293, 137],
+        candidatos: [177, 867],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 6"
+        ],
+        segredo: 177
+    },
+    {
+        id: 14,
+        numeros: [154, 629, 503, 743, 136, 900, 959, 832, 157, 21, 624, 924, 882, 957, 429, 327, 890, 345, 300, 618, 937, 29, 895, 506, 6, 990, 430, 80, 814, 570, 736, 839, 867, 379, 966, 243],
+        candidatos: [867, 957],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 6"
+        ],
+        segredo: 957
+    },
+    {
+        id: 15,
+        numeros: [219, 598, 664, 413, 44, 874, 396, 166, 28, 323, 792, 149, 344, 807, 303, 515, 762, 251, 703, 20, 645, 919, 78, 259, 925, 395, 538, 943, 621, 87, 394, 510, 675, 897, 143, 208],
+        candidatos: [87, 807],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 11"
+        ],
+        segredo: 87
+    },
+    {
+        id: 16,
+        numeros: [475, 355, 609, 282, 527, 742, 261, 582, 108, 533, 440, 356, 496, 425, 916, 447, 634, 314, 876, 87, 967, 307, 679, 903, 630, 775, 640, 622, 120, 934, 655, 119, 857, 417, 551, 607],
+        candidatos: [87, 447],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 10"
+        ],
+        segredo: 447
+    },
+    {
+        id: 17,
+        numeros: [169, 147, 574, 245, 872, 191, 841, 114, 557, 115, 432, 851, 192, 194, 339, 710, 163, 361, 686, 962, 146, 516, 584, 715, 612, 411, 31, 118, 537, 420, 447, 269, 690, 835, 200, 441],
+        candidatos: [447, 537],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 5"
+        ],
+        segredo: 537
+    },
+    {
+        id: 18,
+        numeros: [46, 799, 11, 544, 492, 195, 589, 130, 821, 608, 908, 818, 353, 543, 295, 864, 463, 605, 922, 777, 537, 322, 638, 329, 426, 105, 749, 927, 739, 465, 592, 147, 238, 204, 808, 681],
+        candidatos: [537, 777],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 17"
+        ],
+        segredo: 777
+    },
+    {
+        id: 19,
+        numeros: [16, 13, 168, 266, 127, 623, 897, 474, 867, 659, 199, 735, 377, 744, 680, 488, 309, 399, 175, 103, 246, 950, 158, 26, 165, 369, 537, 722, 456, 923, 826, 670, 685, 17, 724, 548],
+        candidatos: [537, 867],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 12"
+        ],
+        segredo: 867
+    },
+    {
+        id: 20,
+        numeros: [540, 62, 521, 93, 829, 507, 23, 101, 476, 879, 791, 162, 526, 182, 590, 218, 597, 833, 785, 387, 380, 58, 830, 572, 568, 254, 852, 403, 581, 404, 310, 776, 87, 995, 885, 457],
+        candidatos: [87, 597],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 8"
+        ],
+        segredo: 597
+    },
+    {
+        id: 21,
+        numeros: [738, 979, 861, 948, 340, 646, 637, 545, 954, 562, 816, 987, 99, 400, 823, 619, 248, 89, 234, 721, 957, 90, 994, 777, 19, 110, 265, 32, 15, 904, 973, 774, 591, 912, 250, 337],
+        candidatos: [777, 957],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 7"
+        ],
+        segredo: 957
+    },
+    {
+        id: 22,
+        numeros: [299, 495, 116, 497, 214, 348, 487, 419, 673, 447, 262, 458, 684, 870, 414, 139, 951, 896, 385, 183, 726, 666, 167, 415, 730, 417, 317, 940, 687, 434, 648, 70, 421, 693, 888, 76],
+        candidatos: [447, 687],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 3"
+        ],
+        segredo: 687
+    },
+    {
+        id: 23,
+        numeros: [732, 124, 877, 112, 87, 275, 953, 289, 406, 86, 210, 906, 771, 438, 2, 796, 678, 205, 809, 949, 111, 725, 442, 50, 671, 184, 505, 276, 264, 931, 641, 40, 711, 57, 311, 867],
+        candidatos: [87, 867],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 12"
+        ],
+        segredo: 867
+    },
+    {
+        id: 24,
+        numeros: [561, 826, 855, 556, 486, 383, 499, 290, 831, 998, 306, 615, 285, 96, 155, 308, 786, 203, 439, 874, 416, 781, 209, 36, 627, 734, 537, 803, 610, 237, 911, 180, 636, 884, 351, 47],
+        candidatos: [537, 627],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 12"
+        ],
+        segredo: 537
+    },
+    {
+        id: 25,
+        numeros: [188, 239, 762, 717, 232, 350, 33, 327, 802, 260, 114, 945, 8, 810, 474, 993, 87, 889, 956, 109, 371, 983, 768, 322, 917, 559, 506, 54, 27, 935, 389, 450, 392, 745, 644, 883],
+        candidatos: [87, 717],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 11"
+        ],
+        segredo: 87
+    },
+    {
+        id: 26,
+        numeros: [564, 800, 10, 833, 687, 331, 9, 324, 719, 196, 695, 313, 236, 147, 600, 794, 772, 242, 825, 270, 718, 562, 769, 179, 98, 193, 228, 790, 462, 763, 367, 982, 87, 969, 921, 405],
+        candidatos: [87, 687],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 3"
+        ],
+        segredo: 687
+    },
+    {
+        id: 27,
+        numeros: [257, 756, 697, 700, 676, 741, 177, 313, 750, 68, 61, 282, 444, 238, 74, 650, 145, 258, 125, 893, 461, 267, 892, 57, 901, 376, 255, 518, 674, 149, 363, 955, 571, 48, 459, 962],
+        candidatos: [177, 267],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 1"
+        ],
+        segredo: 267
+    },
+    {
+        id: 28,
+        numeros: [765, 326, 307, 463, 331, 965, 819, 653, 100, 304, 201, 490, 256, 84, 178, 507, 720, 151, 731, 923, 986, 781, 550, 795, 216, 384, 480, 586, 166, 150, 249, 394, 627, 182, 177, 791],
+        candidatos: [177, 627],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 0"
+        ],
+        segredo: 627
+    },
+    {
+        id: 29,
+        numeros: [504, 524, 364, 652, 360, 336, 748, 152, 325, 310, 985, 255, 90, 850, 586, 422, 866, 914, 378, 626, 82, 779, 131, 1, 907, 713, 467, 869, 683, 887, 819, 651, 741, 237, 177, 357],
+        candidatos: [177, 357],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 6"
+        ],
+        segredo: 177
+    },
+    {
+        id: 30,
+        numeros: [195, 117, 602, 74, 643, 512, 366, 449, 811, 267, 633, 494, 926, 430, 215, 960, 913, 425, 244, 164, 349, 820, 453, 806, 30, 490, 296, 502, 283, 128, 77, 472, 113, 701, 717, 57],
+        candidatos: [267, 717],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 14"
+        ],
+        segredo: 717
+    },
+    {
+        id: 31,
+        numeros: [690, 427, 489, 484, 173, 552, 547, 395, 306, 537, 706, 327, 181, 50, 658, 793, 751, 982, 972, 18, 735, 455, 104, 176, 558, 583, 207, 810, 202, 220, 597, 988, 631, 7, 172, 849],
+        candidatos: [537, 597],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 5"
+        ],
+        segredo: 537
+    },
+    {
+        id: 32,
+        numeros: [498, 729, 661, 716, 515, 61, 59, 258, 123, 842, 290, 532, 672, 765, 897, 224, 231, 617, 267, 198, 830, 702, 461, 976, 870, 965, 354, 767, 587, 580, 989, 986, 227, 687, 448, 160],
+        candidatos: [267, 687],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 3"
+        ],
+        segredo: 687
+    },
+    {
+        id: 33,
+        numeros: [417, 822, 178, 662, 247, 996, 537, 242, 933, 827, 579, 881, 878, 470, 550, 691, 616, 319, 708, 754, 531, 970, 280, 65, 15, 357, 944, 92, 620, 977, 294, 43, 107, 569, 352, 835],
+        candidatos: [357, 537],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 15"
+        ],
+        segredo: 357
+    },
+    {
+        id: 34,
+        numeros: [712, 714, 175, 368, 980, 863, 332, 285, 281, 145, 984, 778, 963, 342, 696, 807, 563, 578, 787, 798, 601, 560, 357, 723, 998, 301, 947, 910, 520, 451, 471, 895, 825, 91, 987, 682],
+        candidatos: [357, 807],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 9"
+        ],
+        segredo: 807
+    },
+    {
+        id: 35,
+        numeros: [941, 321, 880, 784, 350, 4, 226, 733, 57, 718, 475, 445, 997, 536, 856, 267, 704, 909, 462, 663, 186, 341, 134, 613, 828, 790, 902, 899, 83, 727, 894, 165, 653, 284, 125, 87],
+        candidatos: [87, 267],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 1"
+        ],
+        segredo: 267
+    },
+    {
+        id: 36,
+        numeros: [843, 135, 859, 151, 514, 541, 315, 510, 840, 140, 764, 263, 211, 450, 213, 886, 990, 468, 898, 627, 171, 836, 938, 222, 482, 760, 763, 452, 87, 479, 929, 670, 566, 697, 252, 507],
+        candidatos: [87, 627],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 0"
+        ],
+        segredo: 627
+    },
+    {
+        id: 37,
+        numeros: [493, 698, 433, 939, 373, 402, 64, 240, 464, 804, 286, 782, 717, 715, 667, 788, 159, 10, 418, 174, 397, 783, 375, 632, 144, 241, 335, 885, 287, 605, 237, 49, 807, 654, 316, 553],
+        candidatos: [717, 807],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 14"
+        ],
+        segredo: 717
+    },
+    {
+        id: 38,
+        numeros: [454, 594, 177, 513, 292, 509, 805, 867, 79, 759, 647, 170, 571, 24, 987, 97, 334, 786, 330, 312, 398, 372, 215, 126, 875, 930, 669, 936, 596, 428, 407, 534, 871, 212, 293, 137],
+        candidatos: [177, 867],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 6"
+        ],
+        segredo: 177
+    },
+    {
+        id: 39,
+        numeros: [154, 629, 503, 743, 136, 900, 959, 832, 157, 21, 624, 924, 882, 957, 429, 327, 890, 345, 300, 618, 937, 29, 895, 506, 6, 990, 430, 80, 814, 570, 736, 839, 867, 379, 966, 243],
+        candidatos: [867, 957],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 6"
+        ],
+        segredo: 957
+    },
+    {
+        id: 40,
+        numeros: [219, 598, 664, 413, 44, 874, 396, 166, 28, 323, 792, 149, 344, 807, 303, 515, 762, 251, 703, 20, 645, 919, 78, 259, 925, 395, 538, 943, 621, 87, 394, 510, 675, 897, 143, 208],
+        candidatos: [87, 807],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 11"
+        ],
+        segredo: 87
+    },
+    {
+        id: 41,
+        numeros: [475, 355, 609, 282, 527, 742, 261, 582, 108, 533, 440, 356, 496, 425, 916, 447, 634, 314, 876, 87, 967, 307, 679, 903, 630, 775, 640, 622, 120, 934, 655, 119, 857, 417, 551, 607],
+        candidatos: [87, 447],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 10"
+        ],
+        segredo: 447
+    },
+    {
+        id: 42,
+        numeros: [169, 147, 574, 245, 872, 191, 841, 114, 557, 115, 432, 851, 192, 194, 339, 710, 163, 361, 686, 962, 146, 516, 584, 715, 612, 411, 31, 118, 537, 420, 447, 269, 690, 835, 200, 441],
+        candidatos: [447, 537],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 5"
+        ],
+        segredo: 537
+    },
+    {
+        id: 43,
+        numeros: [46, 799, 11, 544, 492, 195, 589, 130, 821, 608, 908, 818, 353, 543, 295, 864, 463, 605, 922, 777, 537, 322, 638, 329, 426, 105, 749, 927, 739, 465, 592, 147, 238, 204, 808, 681],
+        candidatos: [537, 777],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 17"
+        ],
+        segredo: 777
+    },
+    {
+        id: 44,
+        numeros: [16, 13, 168, 266, 127, 623, 897, 474, 867, 659, 199, 735, 377, 744, 680, 488, 309, 399, 175, 103, 246, 950, 158, 26, 165, 369, 537, 722, 456, 923, 826, 670, 685, 17, 724, 548],
+        candidatos: [537, 867],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 12"
+        ],
+        segredo: 867
+    },
+    {
+        id: 45,
+        numeros: [540, 62, 521, 93, 829, 507, 23, 101, 476, 879, 791, 162, 526, 182, 590, 218, 597, 833, 785, 387, 380, 58, 830, 572, 568, 254, 852, 403, 581, 404, 310, 776, 87, 995, 885, 457],
+        candidatos: [87, 597],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 8"
+        ],
+        segredo: 597
+    },
+    {
+        id: 46,
+        numeros: [738, 979, 861, 948, 340, 646, 637, 545, 954, 562, 816, 987, 99, 400, 823, 619, 248, 89, 234, 721, 957, 90, 994, 777, 19, 110, 265, 32, 15, 904, 973, 774, 591, 912, 250, 337],
+        candidatos: [777, 957],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 7"
+        ],
+        segredo: 957
+    },
+    {
+        id: 47,
+        numeros: [299, 495, 116, 497, 214, 348, 487, 419, 673, 447, 262, 458, 684, 870, 414, 139, 951, 896, 385, 183, 726, 666, 167, 415, 730, 417, 317, 940, 687, 434, 648, 70, 421, 693, 888, 76],
+        candidatos: [447, 687],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 3"
+        ],
+        segredo: 687
+    },
+    {
+        id: 48,
+        numeros: [732, 124, 877, 112, 87, 275, 953, 289, 406, 86, 210, 906, 771, 438, 2, 796, 678, 205, 809, 949, 111, 725, 442, 50, 671, 184, 505, 276, 264, 931, 641, 40, 711, 57, 311, 867],
+        candidatos: [87, 867],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 12"
+        ],
+        segredo: 867
+    },
+    {
+        id: 49,
+        numeros: [561, 826, 855, 556, 486, 383, 499, 290, 831, 998, 306, 615, 285, 96, 155, 308, 786, 203, 439, 874, 416, 781, 209, 36, 627, 734, 537, 803, 610, 237, 911, 180, 636, 884, 351, 47],
+        candidatos: [537, 627],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 12"
+        ],
+        segredo: 537
+    },
+    {
+        id: 50,
+        numeros: [188, 239, 762, 717, 232, 350, 33, 327, 802, 260, 114, 945, 8, 810, 474, 993, 87, 889, 956, 109, 371, 983, 768, 322, 917, 559, 506, 54, 27, 935, 389, 450, 392, 745, 644, 883],
+        candidatos: [87, 717],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 11"
+        ],
+        segredo: 87
+    },
+    {
+        id: 51,
+        numeros: [564, 800, 10, 833, 687, 331, 9, 324, 719, 196, 695, 313, 236, 147, 600, 794, 772, 242, 825, 270, 718, 562, 769, 179, 98, 193, 228, 790, 462, 763, 367, 982, 87, 969, 921, 405],
+        candidatos: [87, 687],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 3"
+        ],
+        segredo: 687
+    },
+    {
+        id: 52,
+        numeros: [257, 756, 697, 700, 676, 741, 177, 313, 750, 68, 61, 282, 444, 238, 74, 650, 145, 258, 125, 893, 461, 267, 892, 57, 901, 376, 255, 518, 674, 149, 363, 955, 571, 48, 459, 962],
+        candidatos: [177, 267],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 1"
+        ],
+        segredo: 267
+    },
+    {
+        id: 53,
+        numeros: [765, 326, 307, 463, 331, 965, 819, 653, 100, 304, 201, 490, 256, 84, 178, 507, 720, 151, 731, 923, 986, 781, 550, 795, 216, 384, 480, 586, 166, 150, 249, 394, 627, 182, 177, 791],
+        candidatos: [177, 627],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 0"
+        ],
+        segredo: 627
+    },
+    {
+        id: 54,
+        numeros: [838, 249, 904, 254, 589, 700, 950, 628, 825, 277, 708, 120, 237, 962, 878, 130, 50, 82, 481, 418, 703, 569, 169, 480, 642, 807, 79, 928, 663, 267, 241, 253, 495, 250, 148, 783],
+        candidatos: [267, 807],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 9"
+        ],
+        segredo: 807
+    },
+    {
+        id: 55,
+        numeros: [659, 94, 42, 30, 583, 267, 236, 799, 522, 376, 541, 402, 255, 867, 99, 476, 16, 850, 571, 713, 645, 474, 892, 765, 876, 507, 768, 780, 953, 606, 123, 939, 210, 121, 977, 842],
+        candidatos: [267, 867],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 1"
+        ],
+        segredo: 267
+    },
+    {
+        id: 56,
+        numeros: [729, 662, 807, 979, 890, 246, 933, 491, 88, 327, 846, 271, 157, 698, 375, 617, 367, 546, 847, 695, 794, 870, 880, 163, 201, 124, 125, 906, 407, 424, 380, 447, 144, 408, 665, 404],
+        candidatos: [447, 807],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 10"
+        ],
+        segredo: 447
+    },
+    {
+        id: 57,
+        numeros: [453, 517, 709, 627, 695, 745, 595, 37, 347, 343, 668, 358, 766, 71, 995, 546, 964, 272, 761, 740, 858, 585, 156, 692, 873, 148, 267, 274, 978, 500, 142, 507, 410, 969, 593, 133],
+        candidatos: [267, 627],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 1"
+        ],
+        segredo: 267
+    },
+    {
+        id: 58,
+        numeros: [206, 505, 606, 72, 271, 190, 758, 935, 443, 318, 699, 853, 415, 707, 66, 523, 231, 73, 385, 868, 177, 946, 41, 860, 52, 87, 388, 63, 848, 975, 688, 320, 409, 473, 382, 147],
+        candidatos: [87, 177],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 11"
+        ],
+        segredo: 87
+    },
+    {
+        id: 59,
+        numeros: [635, 611, 391, 374, 478, 121, 656, 971, 219, 952, 170, 3, 60, 5, 508, 491, 807, 210, 481, 56, 918, 446, 302, 746, 689, 932, 14, 999, 288, 897, 233, 955, 597, 67, 590, 780],
+        candidatos: [597, 807],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 9"
+        ],
+        segredo: 807
+    },
+    {
+        id: 60,
+        numeros: [504, 524, 364, 652, 360, 336, 748, 152, 325, 310, 985, 255, 90, 850, 586, 422, 866, 914, 378, 626, 82, 779, 131, 1, 907, 713, 467, 869, 683, 887, 819, 651, 741, 237, 177, 357],
+        candidatos: [177, 357],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 6"
+        ],
+        segredo: 177
+    },
+    {
+        id: 61,
+        numeros: [195, 117, 602, 74, 643, 512, 366, 449, 811, 267, 633, 494, 926, 430, 215, 960, 913, 425, 244, 164, 349, 820, 453, 806, 30, 490, 296, 502, 283, 128, 77, 472, 113, 701, 717, 57],
+        candidatos: [267, 717],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 14"
+        ],
+        segredo: 717
+    },
+    {
+        id: 62,
+        numeros: [690, 427, 489, 484, 173, 552, 547, 395, 306, 537, 706, 327, 181, 50, 658, 793, 751, 982, 972, 18, 735, 455, 104, 176, 558, 583, 207, 810, 202, 220, 597, 988, 631, 7, 172, 849],
+        candidatos: [537, 597],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 5"
+        ],
+        segredo: 537
+    },
+    {
+        id: 63,
+        numeros: [498, 729, 661, 716, 515, 61, 59, 258, 123, 842, 290, 532, 672, 765, 897, 224, 231, 617, 267, 198, 830, 702, 461, 976, 870, 965, 354, 767, 587, 580, 989, 986, 227, 687, 448, 160],
+        candidatos: [267, 687],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 3"
+        ],
+        segredo: 687
+    },
+    {
+        id: 64,
+        numeros: [635, 611, 391, 374, 478, 121, 656, 971, 219, 952, 170, 3, 60, 5, 508, 491, 807, 210, 481, 56, 918, 446, 302, 746, 689, 932, 14, 999, 288, 897, 233, 955, 597, 67, 590, 780],
+        candidatos: [597, 807],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 9"
+        ],
+        segredo: 807
+    },
+    {
+        id: 65,
+        numeros: [206, 505, 606, 72, 271, 190, 758, 935, 443, 318, 699, 853, 415, 707, 66, 523, 231, 73, 385, 868, 177, 946, 41, 860, 52, 87, 388, 63, 848, 975, 688, 320, 409, 473, 382, 147],
+        candidatos: [87, 177],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 11"
+        ],
+        segredo: 87
+    },
+    {
+        id: 66,
+        numeros: [453, 517, 709, 627, 695, 745, 595, 37, 347, 343, 668, 358, 766, 71, 995, 546, 964, 272, 761, 740, 858, 585, 156, 692, 873, 148, 267, 274, 978, 500, 142, 507, 410, 969, 593, 133],
+        candidatos: [267, 627],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 1"
+        ],
+        segredo: 267
+    },
+    {
+        id: 67,
+        numeros: [504, 524, 364, 652, 360, 336, 748, 152, 325, 310, 985, 255, 90, 850, 586, 422, 866, 914, 378, 626, 82, 779, 131, 1, 907, 713, 467, 869, 683, 887, 819, 651, 741, 237, 177, 357],
+        candidatos: [177, 357],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 6"
+        ],
+        segredo: 177
+    },
+    {
+        id: 68,
+        numeros: [195, 117, 602, 74, 643, 512, 366, 449, 811, 267, 633, 494, 926, 430, 215, 960, 913, 425, 244, 164, 349, 820, 453, 806, 30, 490, 296, 502, 283, 128, 77, 472, 113, 701, 717, 57],
+        candidatos: [267, 717],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 14"
+        ],
+        segredo: 717
+    },
+    {
+        id: 69,
+        numeros: [690, 427, 489, 484, 173, 552, 547, 395, 306, 537, 706, 327, 181, 50, 658, 793, 751, 982, 972, 18, 735, 455, 104, 176, 558, 583, 207, 810, 202, 220, 597, 988, 631, 7, 172, 849],
+        candidatos: [537, 597],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 5"
+        ],
+        segredo: 537
+    },
+    {
+        id: 70,
+        numeros: [498, 729, 661, 716, 515, 61, 59, 258, 123, 842, 290, 532, 672, 765, 897, 224, 231, 617, 267, 198, 830, 702, 461, 976, 870, 965, 354, 767, 587, 580, 989, 986, 227, 687, 448, 160],
+        candidatos: [267, 687],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 3"
+        ],
+        segredo: 687
+    },
+    {
+        id: 71,
+        numeros: [417, 822, 178, 662, 247, 996, 537, 242, 933, 827, 579, 881, 878, 470, 550, 691, 616, 319, 708, 754, 531, 970, 280, 65, 15, 357, 944, 92, 620, 977, 294, 43, 107, 569, 352, 835],
+        candidatos: [357, 537],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 15"
+        ],
+        segredo: 357
+    },
+    {
+        id: 72,
+        numeros: [712, 714, 175, 368, 980, 863, 332, 285, 281, 145, 984, 778, 963, 342, 696, 807, 563, 578, 787, 798, 601, 560, 357, 723, 998, 301, 947, 910, 520, 451, 471, 895, 825, 91, 987, 682],
+        candidatos: [357, 807],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 9"
+        ],
+        segredo: 807
+    },
+    {
+        id: 73,
+        numeros: [941, 321, 880, 784, 350, 4, 226, 733, 57, 718, 475, 445, 997, 536, 856, 267, 704, 909, 462, 663, 186, 341, 134, 613, 828, 790, 902, 899, 83, 727, 894, 165, 653, 284, 125, 87],
+        candidatos: [87, 267],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 1"
+        ],
+        segredo: 267
+    },
+    {
+        id: 74,
+        numeros: [843, 135, 859, 151, 514, 541, 315, 510, 840, 140, 764, 263, 211, 450, 213, 886, 990, 468, 898, 627, 171, 836, 938, 222, 482, 760, 763, 452, 87, 479, 929, 670, 566, 697, 252, 507],
+        candidatos: [87, 627],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 0"
+        ],
+        segredo: 627
+    },
+    {
+        id: 75,
+        numeros: [493, 698, 433, 939, 373, 402, 64, 240, 464, 804, 286, 782, 717, 715, 667, 788, 159, 10, 418, 174, 397, 783, 375, 632, 144, 241, 335, 885, 287, 605, 237, 49, 807, 654, 316, 553],
+        candidatos: [717, 807],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 14"
+        ],
+        segredo: 717
+    },
+    {
+        id: 76,
+        numeros: [454, 594, 177, 513, 292, 509, 805, 867, 79, 759, 647, 170, 571, 24, 987, 97, 334, 786, 330, 312, 398, 372, 215, 126, 875, 930, 669, 936, 596, 428, 407, 534, 871, 212, 293, 137],
+        candidatos: [177, 867],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 6"
+        ],
+        segredo: 177
+    },
+    {
+        id: 77,
+        numeros: [154, 629, 503, 743, 136, 900, 959, 832, 157, 21, 624, 924, 882, 957, 429, 327, 890, 345, 300, 618, 937, 29, 895, 506, 6, 990, 430, 80, 814, 570, 736, 839, 867, 379, 966, 243],
+        candidatos: [867, 957],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 6"
+        ],
+        segredo: 957
+    },
+    {
+        id: 78,
+        numeros: [219, 598, 664, 413, 44, 874, 396, 166, 28, 323, 792, 149, 344, 807, 303, 515, 762, 251, 703, 20, 645, 919, 78, 259, 925, 395, 538, 943, 621, 87, 394, 510, 675, 897, 143, 208],
+        candidatos: [87, 807],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 11"
+        ],
+        segredo: 87
+    },
+    {
+        id: 79,
+        numeros: [475, 355, 609, 282, 527, 742, 261, 582, 108, 533, 440, 356, 496, 425, 916, 447, 634, 314, 876, 87, 967, 307, 679, 903, 630, 775, 640, 622, 120, 934, 655, 119, 857, 417, 551, 607],
+        candidatos: [87, 447],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 10"
+        ],
+        segredo: 447
+    },
+    {
+        id: 80,
+        numeros: [169, 147, 574, 245, 872, 191, 841, 114, 557, 115, 432, 851, 192, 194, 339, 710, 163, 361, 686, 962, 146, 516, 584, 715, 612, 411, 31, 118, 537, 420, 447, 269, 690, 835, 200, 441],
+        candidatos: [447, 537],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 5"
+        ],
+        segredo: 537
+    },
+    {
+        id: 81,
+        numeros: [46, 799, 11, 544, 492, 195, 589, 130, 821, 608, 908, 818, 353, 543, 295, 864, 463, 605, 922, 777, 537, 322, 638, 329, 426, 105, 749, 927, 739, 465, 592, 147, 238, 204, 808, 681],
+        candidatos: [537, 777],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 17"
+        ],
+        segredo: 777
+    },
+    {
+        id: 82,
+        numeros: [16, 13, 168, 266, 127, 623, 897, 474, 867, 659, 199, 735, 377, 744, 680, 488, 309, 399, 175, 103, 246, 950, 158, 26, 165, 369, 537, 722, 456, 923, 826, 670, 685, 17, 724, 548],
+        candidatos: [537, 867],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 12"
+        ],
+        segredo: 867
+    },
+    {
+        id: 83,
+        numeros: [540, 62, 521, 93, 829, 507, 23, 101, 476, 879, 791, 162, 526, 182, 590, 218, 597, 833, 785, 387, 380, 58, 830, 572, 568, 254, 852, 403, 581, 404, 310, 776, 87, 995, 885, 457],
+        candidatos: [87, 597],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 8"
+        ],
+        segredo: 597
+    },
+    {
+        id: 84,
+        numeros: [738, 979, 861, 948, 340, 646, 637, 545, 954, 562, 816, 987, 99, 400, 823, 619, 248, 89, 234, 721, 957, 90, 994, 777, 19, 110, 265, 32, 15, 904, 973, 774, 591, 912, 250, 337],
+        candidatos: [777, 957],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 7"
+        ],
+        segredo: 957
+    },
+    {
+        id: 85,
+        numeros: [299, 495, 116, 497, 214, 348, 487, 419, 673, 447, 262, 458, 684, 870, 414, 139, 951, 896, 385, 183, 726, 666, 167, 415, 730, 417, 317, 940, 687, 434, 648, 70, 421, 693, 888, 76],
+        candidatos: [447, 687],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 3"
+        ],
+        segredo: 687
+    },
+    {
+        id: 86,
+        numeros: [732, 124, 877, 112, 87, 275, 953, 289, 406, 86, 210, 906, 771, 438, 2, 796, 678, 205, 809, 949, 111, 725, 442, 50, 671, 184, 505, 276, 264, 931, 641, 40, 711, 57, 311, 867],
+        candidatos: [87, 867],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 12"
+        ],
+        segredo: 867
+    },
+    {
+        id: 87,
+        numeros: [561, 826, 855, 556, 486, 383, 499, 290, 831, 998, 306, 615, 285, 96, 155, 308, 786, 203, 439, 874, 416, 781, 209, 36, 627, 734, 537, 803, 610, 237, 911, 180, 636, 884, 351, 47],
+        candidatos: [537, 627],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 12"
+        ],
+        segredo: 537
+    },
+    {
+        id: 88,
+        numeros: [188, 239, 762, 717, 232, 350, 33, 327, 802, 260, 114, 945, 8, 810, 474, 993, 87, 889, 956, 109, 371, 983, 768, 322, 917, 559, 506, 54, 27, 935, 389, 450, 392, 745, 644, 883],
+        candidatos: [87, 717],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 11"
+        ],
+        segredo: 87
+    },
+    {
+        id: 89,
+        numeros: [564, 800, 10, 833, 687, 331, 9, 324, 719, 196, 695, 313, 236, 147, 600, 794, 772, 242, 825, 270, 718, 562, 769, 179, 98, 193, 228, 790, 462, 763, 367, 982, 87, 969, 921, 405],
+        candidatos: [87, 687],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 3"
+        ],
+        segredo: 687
+    },
+    {
+        id: 90,
+        numeros: [257, 756, 697, 700, 676, 741, 177, 313, 750, 68, 61, 282, 444, 238, 74, 650, 145, 258, 125, 893, 461, 267, 892, 57, 901, 376, 255, 518, 674, 149, 363, 955, 571, 48, 459, 962],
+        candidatos: [177, 267],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 1"
+        ],
+        segredo: 267
+    },
+    {
+        id: 91,
+        numeros: [765, 326, 307, 463, 331, 965, 819, 653, 100, 304, 201, 490, 256, 84, 178, 507, 720, 151, 731, 923, 986, 781, 550, 795, 216, 384, 480, 586, 166, 150, 249, 394, 627, 182, 177, 791],
+        candidatos: [177, 627],
+        dicasFinais: [
+            "O produto dos seus algarismos é divisível por 7",
+            "O resto da divisão por 15 é 12",
+            "O resto da divisão do número por 19 dará o resto 0"
+        ],
+        segredo: 627
     }
 ];
 
 let currentTabuleiro = null;
+let currentTabuleiroIndex = 0; // Índice do tabuleiro atual
 let round = 0;
 let time = 0; // Tempo começa em 0 e conta para cima
 let timerInterval = null; // Para armazenar o intervalo do timer
@@ -149,47 +1158,17 @@ async function initializeGame() {
 
         updateLoadingProgress(40, 'Gerando matriz de códigos...');
 
-        // Gerar o tabuleiro com tentativas até encontrar um válido
-        let tentativas = 0;
-        let tabuleiroValido = false;
+        updateLoadingProgress(50, 'Selecionando tabuleiro...');
 
-        updateLoadingProgress(40, 'Validando códigos de segurança...');
+        // Gerar um tabuleiro do PDF (sempre válido)
+        currentTabuleiro = generateRandomTabuleiro();
 
-        // Continuar tentando até encontrar um tabuleiro válido
-        while (!tabuleiroValido) {
-            tentativas++;
-            updateLoadingProgress(40 + (tentativas % 100) / 100 * 30, `Tentativa ${tentativas}...`);
+        updateLoadingProgress(70, 'Validando códigos de segurança...');
 
-            // Gerar um novo tabuleiro
-            currentTabuleiro = generateRandomTabuleiro();
-
-            // Verificar se o tabuleiro é válido
-            if (currentTabuleiro !== null) {
-                // Verificar se todas as pistas têm números para marcar
-                tabuleiroValido = verificarTodasPistasTemNumerosParaMarcar(currentTabuleiro);
-
-                if (tabuleiroValido) {
-                    // Gerar as dicas finais
-                    currentTabuleiro.dicasFinais = generateFinalHints(currentTabuleiro.segredo);
-                    console.log('Tabuleiro válido gerado após', tentativas, 'tentativas');
-                    console.log('Segredo:', currentTabuleiro.segredo);
-                    console.log('Sobreviventes:', currentTabuleiro.sobreviventes);
-
-                    // Verificar se restam exatamente 2 números
-                    if (currentTabuleiro.sobreviventes.length === 2) {
-                        console.log('Restam exatamente 2 números após aplicar todas as regras!');
-                    } else {
-                        console.log('ERRO: Não restam exatamente 2 números após aplicar todas as regras!');
-                        tabuleiroValido = false; // Continuar tentando
-                    }
-                }
-            }
-
-            // A cada 1000 tentativas, mostrar uma mensagem de progresso
-            if (tentativas % 1000 === 0) {
-                console.log(`Ainda tentando gerar um tabuleiro válido... Tentativa ${tentativas}`);
-            }
-        }
+        console.log('Tabuleiro do PDF carregado com sucesso!');
+        console.log('Segredo:', currentTabuleiro.segredo);
+        console.log('Sobreviventes:', currentTabuleiro.sobreviventes);
+        console.log('Tabuleiro ID:', currentTabuleiro.tabuleiroId);
 
         updateLoadingProgress(80, 'Carregando interface de segurança...');
 
@@ -278,77 +1257,41 @@ window.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Função para gerar configurações aleatórias de pistas para tabuleiros que não têm
+function gerarPistasAleatorias() {
+    return Array.from({length: 7}, () => Math.random() < 0.5);
+}
+
 function generateRandomTabuleiro() {
-    // Definir valores de isTrue para as regras
-    FIXED_RULES.forEach(rule => {
-        rule.isTrue = Math.random() < 0.3; // 30% de chance de ser verdadeira e 70% de ser falsa
-    });
+    // Escolher um tabuleiro aleatório do PDF
+    const tabuleiroEscolhido = TABULEIROS_PDF[Math.floor(Math.random() * TABULEIROS_PDF.length)];
 
-    // Gerar números aleatórios
-    const numeros = generateRandomNumbers(NUMEROS_TOTAL);
+    // Atualizar o índice do tabuleiro atual
+    currentTabuleiroIndex = TABULEIROS_PDF.findIndex(t => t.id === tabuleiroEscolhido.id);
 
-    // Escolher um número aleatório como segredo
-    const segredoIndex = Math.floor(Math.random() * numeros.length);
-    const segredo = numeros[segredoIndex];
+    console.log(`Tabuleiro escolhido: ${tabuleiroEscolhido.id}`);
+    console.log(`Segredo: ${tabuleiroEscolhido.segredo}`);
+    console.log(`Candidatos: ${tabuleiroEscolhido.candidatos.join(', ')}`);
 
-    // Verificar quais números sobrevivem após aplicar todas as regras
-    let sobreviventes = [...numeros];
+    // Usar as configurações de pistas do tabuleiro ou gerar aleatórias se não existirem
+    const pistasVerdadeiras = tabuleiroEscolhido.pistasVerdadeiras || gerarPistasAleatorias();
 
-    // Aplicar cada regra para filtrar os números
-    for (const regra of FIXED_RULES) {
-        // Verificar quantos números seriam eliminados pela regra
-        // Se a regra é verdadeira, eliminamos números que NÃO se encaixam na descrição
-        // Se a regra é falsa, eliminamos números que SE encaixam na descrição
-        const numerosEliminados = regra.isTrue ?
-            sobreviventes.filter(num => !regra.check(num)) :
-            sobreviventes.filter(num => regra.check(num));
+    // Criar as regras com base nas configurações de verdadeiro/falso
+    const regras = FIXED_RULES_BASE.map((regra, index) => ({
+        ...regra,
+        isTrue: pistasVerdadeiras[index]
+    }));
 
-        // Verificar se o segredo seria eliminado
-        // O segredo é eliminado se NÃO se encaixa na descrição (quando verdadeira) ou se SE encaixa (quando falsa)
-        const segredoEliminado = regra.isTrue ?
-            !regra.check(segredo) :
-            regra.check(segredo);
+    console.log(`Configuração das pistas: ${pistasVerdadeiras.map(v => v ? 'V' : 'F').join(', ')}`);
 
-        // Se o segredo seria eliminado, retornar null
-        if (segredoEliminado) {
-            return null;
-        }
-
-        // Se todos os números seriam eliminados, retornar null
-        if (numerosEliminados.length === sobreviventes.length) {
-            return null;
-        }
-
-        // Aplicar a regra
-        // A lógica já está correta: eliminamos os números que foram identificados como "numerosEliminados"
-        sobreviventes = sobreviventes.filter(num => !numerosEliminados.includes(num));
-
-        // Se já temos menos de 2 números, retornar null
-        if (sobreviventes.length < 2) {
-            return null;
-        }
-    }
-
-    // Verificar se temos exatamente 2 números no final
-    if (sobreviventes.length !== 2) {
-        return null;
-    }
-
-    // Verificar se o segredo está entre os sobreviventes
-    if (!sobreviventes.includes(segredo)) {
-        return null;
-    }
-
-    // Gerar as dicas finais
-    const dicasFinais = [];
-
-    // Retornar o tabuleiro válido
+    // Retornar o tabuleiro do PDF formatado para o jogo
     return {
-        numeros: numeros.map(valor => ({ valor })),
-        regras: FIXED_RULES,
-        dicasFinais,
-        segredo,
-        sobreviventes // Adicionamos os sobreviventes para uso posterior
+        numeros: tabuleiroEscolhido.numeros.map(valor => ({ valor })),
+        regras: regras,
+        dicasFinais: tabuleiroEscolhido.dicasFinais,
+        segredo: tabuleiroEscolhido.segredo,
+        sobreviventes: tabuleiroEscolhido.candidatos, // Os candidatos são os sobreviventes
+        tabuleiroId: tabuleiroEscolhido.id
     };
 }
 
@@ -390,35 +1333,20 @@ function isRuleApplicable(rule, numeros, segredo) {
     return numerosQueAtendem.length > 0 && segredoSobrevive;
 }
 function generateFinalHints(segredo) {
-  // Obter os dois números finais
+  // Se o tabuleiro já tem dicas finais do PDF, usar elas
+  if (currentTabuleiro && currentTabuleiro.dicasFinais && currentTabuleiro.dicasFinais.length > 0) {
+    return currentTabuleiro.dicasFinais;
+  }
+
+  // Caso contrário, gerar dicas como antes (fallback)
   let nums = [];
 
   // Se o tabuleiro tem sobreviventes, usamos eles
   if (currentTabuleiro && currentTabuleiro.sobreviventes && currentTabuleiro.sobreviventes.length === 2) {
     nums = [...currentTabuleiro.sobreviventes];
   } else {
-    // Caso contrário, aplicamos todas as regras para encontrar os dois números finais
-    let todosNumeros = currentTabuleiro ? currentTabuleiro.numeros.map(n => n.valor) : [];
-
-    if (currentTabuleiro && currentTabuleiro.regras) {
-      currentTabuleiro.regras.forEach(regra => {
-        // Se a regra é verdadeira, eliminamos números que NÃO se encaixam na descrição
-        // Se a regra é falsa, eliminamos números que SE encaixam na descrição
-        if (regra.isTrue) {
-          todosNumeros = todosNumeros.filter(num => !regra.check(num));
-        } else {
-          todosNumeros = todosNumeros.filter(num => regra.check(num));
-        }
-      });
-    }
-
-    // Se temos exatamente 2 números, usamos eles
-    if (todosNumeros.length === 2) {
-      nums = todosNumeros;
-    } else {
-      // Caso contrário, usamos o segredo e um número aleatório
-      nums = [segredo, segredo + (Math.random() < 0.5 ? 1 : -1)];
-    }
+    // Usar o segredo e um número aleatório como fallback
+    nums = [segredo, segredo + (Math.random() < 0.5 ? 1 : -1)];
   }
 
   // Garantir que o segredo está na lista
@@ -450,24 +1378,6 @@ function generateFinalHints(segredo) {
       `O número secreto é par` :
       `O número secreto é ímpar`,
 
-    // Comparação de algarismos
-    segredo.toString().length === outroNumero.toString().length ?
-      `O número secreto tem ${segredo.toString().length} algarismos` :
-      `O número secreto tem ${segredo.toString().length} algarismos, diferente do outro número`,
-
-    // Divisão por 3
-    segredo % 3 === 0 ?
-      `O número secreto é divisível por 3` :
-      `O número secreto não é divisível por 3`,
-
-    // Soma dos algarismos
-    `A soma dos algarismos é ${sumDigits(segredo)}`,
-
-    // Divisão por 2
-    segredo % 2 === 0 ?
-      `O número secreto é divisível por 2` :
-      `O número secreto não é divisível por 2`,
-
     // Último dígito
     `O último dígito do número secreto é ${segredo % 10}`
   ];
@@ -486,8 +1396,8 @@ function generateBoard(){
     // Calcular quantos números reais temos para distribuir igualmente
     const totalNumeros = currentTabuleiro.numeros.length;
 
-    // Distribuir os números igualmente entre as colunas
-    const numerosPerColuna = Math.ceil(totalNumeros / COLUNAS);
+    // Para tabuleiros 6x6, distribuir 6 números por coluna
+    const numerosPerColuna = 6;
 
     for(let i=0;i<COLUNAS;i++){
         const col=document.createElement('div');
@@ -505,10 +1415,12 @@ function generateBoard(){
             // Ajustar o tamanho do botão com base no número de dígitos
             const numDigits = btn.textContent.length;
             if (numDigits > 2) {
-                btn.style.fontSize = '1rem'; // Fonte ainda menor para números de 3 dígitos
+                btn.style.fontSize = '0.9rem'; // Fonte menor para números de 3 dígitos
                 btn.style.lineHeight = '0.9'; // Reduzir espaçamento entre linhas
             } else if (numDigits == 2) {
-                btn.style.fontSize = '1.1rem'; // Tamanho médio para números de 2 dígitos
+                btn.style.fontSize = '1rem'; // Tamanho médio para números de 2 dígitos
+            } else {
+                btn.style.fontSize = '1.1rem'; // Tamanho maior para números de 1 dígito
             }
 
             col.appendChild(btn);
@@ -519,7 +1431,7 @@ function generateBoard(){
         const numerosFaltantes = numerosPerColuna - (endIdx - startIdx);
         for (let k=0; k<numerosFaltantes; k++) {
             const spacer = document.createElement('div');
-            spacer.style.height = '80px'; // Mesma altura dos botões (atualizada para 80px)
+            spacer.style.height = '70px'; // Altura ajustada para 6x6
             spacer.style.visibility = 'hidden'; // Invisível mas ocupa espaço
             col.appendChild(spacer);
         }
