@@ -85,7 +85,9 @@ ADD COLUMN player_name TEXT DEFAULT 'Anônimo';
 
 4. **Configuração automática:**
    - A Vercel detectará automaticamente que é um site estático
-   - O arquivo `vercel.json` já está configurado para servir o `index.html` como página inicial
+   - O arquivo `vercel.json` já está configurado com:
+     - `outputDirectory: "public"` - define a pasta public como diretório de saída
+     - Rewrite para servir o `index.html` como página inicial
    - Clique em "Deploy"
 
 5. **Configurar variáveis de ambiente (importante para o Supabase):**
