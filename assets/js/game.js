@@ -47,7 +47,6 @@ const TABULEIROS_PDF = [
             "O resto da divisão do número por 19 dará o resto 10"
         ],
         segredo: 447,
-        pistasVerdadeiras: [true, true, true, true, true, true, true] // Todas verdadeiras como no PDF original
     },
     {
         id: 2,
@@ -59,7 +58,7 @@ const TABULEIROS_PDF = [
             "O resto da divisão do número por 19 dará o resto 1"
         ],
         segredo: 267,
-        pistasVerdadeiras: [false, true, false, true, false, true, true] // Variação para tornar mais interessante
+
     },
     {
         id: 3,
@@ -71,7 +70,7 @@ const TABULEIROS_PDF = [
             "O resto da divisão do número por 19 dará o resto 9"
         ],
         segredo: 807,
-        pistasVerdadeiras: [true, false, true, false, true, false, true]
+
     },
     {
         id: 4,
@@ -83,7 +82,7 @@ const TABULEIROS_PDF = [
             "O resto da divisão do número por 19 dará o resto 6"
         ],
         segredo: 177,
-        pistasVerdadeiras: [false, false, true, true, false, true, false]
+
     },
     {
         id: 5,
@@ -95,7 +94,7 @@ const TABULEIROS_PDF = [
             "O resto da divisão do número por 19 dará o resto 14"
         ],
         segredo: 717,
-        pistasVerdadeiras: [true, true, false, false, true, true, false]
+
     },
     {
         id: 6,
@@ -107,7 +106,7 @@ const TABULEIROS_PDF = [
             "O resto da divisão do número por 19 dará o resto 5"
         ],
         segredo: 537,
-        pistasVerdadeiras: [false, false, false, true, true, true, true]
+
     },
     {
         id: 7,
@@ -119,7 +118,7 @@ const TABULEIROS_PDF = [
             "O resto da divisão do número por 19 dará o resto 3"
         ],
         segredo: 687,
-        pistasVerdadeiras: [true, false, true, true, false, false, true]
+
     },
     {
         id: 8,
@@ -131,7 +130,7 @@ const TABULEIROS_PDF = [
             "O resto da divisão do número por 19 dará o resto 15"
         ],
         segredo: 357,
-        pistasVerdadeiras: [false, true, false, false, true, true, false]
+
     },
     {
         id: 9,
@@ -143,7 +142,6 @@ const TABULEIROS_PDF = [
             "O resto da divisão do número por 19 dará o resto 9"
         ],
         segredo: 807,
-        pistasVerdadeiras: [true, true, true, false, false, true, false]
     },
     {
         id: 10,
@@ -155,7 +153,7 @@ const TABULEIROS_PDF = [
             "O resto da divisão do número por 19 dará o resto 1"
         ],
         segredo: 267,
-        pistasVerdadeiras: [false, false, true, false, true, false, true]
+
     },
     {
         id: 11,
@@ -166,7 +164,7 @@ const TABULEIROS_PDF = [
             "O resto da divisão por 15 é 12",
             "O resto da divisão do número por 19 dará o resto 0"
         ],
-        segredo: 627
+        segredo: 627,
     },
     {
         id: 12,
@@ -177,7 +175,8 @@ const TABULEIROS_PDF = [
             "O resto da divisão por 15 é 12",
             "O resto da divisão do número por 19 dará o resto 14"
         ],
-        segredo: 717
+        segredo: 717,
+        pistasVerdadeiras: [true, true, true, true, true, true, true]
     },
     {
         id: 13,
@@ -188,7 +187,8 @@ const TABULEIROS_PDF = [
             "O resto da divisão por 15 é 12",
             "O resto da divisão do número por 19 dará o resto 6"
         ],
-        segredo: 177
+        segredo: 177,
+        pistasVerdadeiras: [true, true, true, true, true, true, true]
     },
     {
         id: 14,
@@ -199,7 +199,8 @@ const TABULEIROS_PDF = [
             "O resto da divisão por 15 é 12",
             "O resto da divisão do número por 19 dará o resto 6"
         ],
-        segredo: 957
+        segredo: 957,
+        pistasVerdadeiras: [true, true, true, true, true, true, true]
     },
     {
         id: 15,
@@ -672,7 +673,8 @@ const TABULEIROS_PDF = [
             "O resto da divisão por 15 é 12",
             "O resto da divisão do número por 19 dará o resto 1"
         ],
-        segredo: 267
+        segredo: 267,
+        pistasVerdadeiras: [false, true, false, true, false, true, true]
     },
     {
         id: 58,
@@ -683,7 +685,8 @@ const TABULEIROS_PDF = [
             "O resto da divisão por 15 é 12",
             "O resto da divisão do número por 19 dará o resto 11"
         ],
-        segredo: 87
+        segredo: 87,
+        pistasVerdadeiras: [false, true, false, true, false, true, true]
     },
     {
         id: 59,
@@ -694,7 +697,8 @@ const TABULEIROS_PDF = [
             "O resto da divisão por 15 é 12",
             "O resto da divisão do número por 19 dará o resto 9"
         ],
-        segredo: 807
+        segredo: 807,
+        pistasVerdadeiras: [false, true, false, true, false, true, true]
     },
     {
         id: 60,
@@ -705,7 +709,8 @@ const TABULEIROS_PDF = [
             "O resto da divisão por 15 é 12",
             "O resto da divisão do número por 19 dará o resto 6"
         ],
-        segredo: 177
+        segredo: 177,
+        pistasVerdadeiras: [false, true, false, true, false, true, true]
     },
     {
         id: 61,
@@ -1071,11 +1076,7 @@ let totalWrongAttempts = 0; // Total de tentativas erradas na pista atual
 let blockDuration = 3000; // Duração inicial do bloqueio (3 segundos)
 let maxWrongAttempts = 3; // Máximo de tentativas erradas antes de penalidade maior
 
-// Variável para controle do tutorial
-let tutorialShown = false;
 
-// Variável para controle do modo de alto contraste
-let highContrastMode = false;
 
 // Função auxiliar para somar os algarismos de um número
 function sumDigits(n){
@@ -1147,11 +1148,9 @@ async function initializeGame() {
         // Atualizar a barra de progresso
         updateLoadingProgress(10, 'Inicializando o jogo...');
 
-        // Garantir que cada regra tenha a propriedade isTrue definida
-        FIXED_RULES.forEach(rule => {
-            if (typeof rule.isTrue === 'undefined') {
-                rule.isTrue = Math.random() < 0.5; // 50% de chance de ser verdadeira ou falsa
-            }
+        // Garantir que cada regra tenha a propriedade isTrue definida como verdadeira
+        FIXED_RULES_BASE.forEach(rule => {
+            rule.isTrue = true; // Todas as pistas são sempre verdadeiras
         });
 
         updateLoadingProgress(30, 'Processando protocolos de segurança...');
@@ -1230,12 +1229,7 @@ async function initializeGame() {
         // Iniciar o timer
         startTimer();
 
-        // Mostrar o tutorial automaticamente na primeira vez
-        if (!tutorialShown) {
-            setTimeout(() => {
-                showTutorial();
-            }, 1000);
-        }
+
     } catch (error) {
         console.error('Erro ao inicializar o jogo:', error);
         alert('Ocorreu um erro ao inicializar o jogo. Por favor, recarregue a página.');
@@ -1257,9 +1251,9 @@ window.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Função para gerar configurações aleatórias de pistas para tabuleiros que não têm
+// Função para gerar configurações de pistas - todas sempre verdadeiras
 function gerarPistasAleatorias() {
-    return Array.from({length: 7}, () => Math.random() < 0.5);
+    return Array.from({length: 7}, () => true);
 }
 
 function generateRandomTabuleiro() {
@@ -1273,13 +1267,13 @@ function generateRandomTabuleiro() {
     console.log(`Segredo: ${tabuleiroEscolhido.segredo}`);
     console.log(`Candidatos: ${tabuleiroEscolhido.candidatos.join(', ')}`);
 
-    // Usar as configurações de pistas do tabuleiro ou gerar aleatórias se não existirem
-    const pistasVerdadeiras = tabuleiroEscolhido.pistasVerdadeiras || gerarPistasAleatorias();
+    // Todas as pistas são sempre verdadeiras
+    const pistasVerdadeiras = Array.from({length: 7}, () => true);
 
     // Criar as regras com base nas configurações de verdadeiro/falso
-    const regras = FIXED_RULES_BASE.map((regra, index) => ({
+    const regras = FIXED_RULES_BASE.map((regra) => ({
         ...regra,
-        isTrue: pistasVerdadeiras[index]
+        isTrue: true
     }));
 
     console.log(`Configuração das pistas: ${pistasVerdadeiras.map(v => v ? 'V' : 'F').join(', ')}`);
@@ -1393,50 +1387,27 @@ function generateBoard(){
     const board=document.getElementById('board');
     board.innerHTML='';
 
-    // Calcular quantos números reais temos para distribuir igualmente
+    // Calcular quantos números reais temos para distribuir
     const totalNumeros = currentTabuleiro.numeros.length;
 
-    // Para tabuleiros 6x6, distribuir 6 números por coluna
-    const numerosPerColuna = 6;
+    // Criar botões diretamente no grid (CSS Grid irá organizar automaticamente)
+    for(let i = 0; i < totalNumeros; i++){
+        const btn=document.createElement('button');
+        btn.textContent=currentTabuleiro.numeros[i].valor;
+        btn.addEventListener('click',markNumber);
 
-    for(let i=0;i<COLUNAS;i++){
-        const col=document.createElement('div');
-        col.classList.add('column');
-
-        // Calcular quantos números devem ir nesta coluna
-        const startIdx = i * numerosPerColuna;
-        const endIdx = Math.min(startIdx + numerosPerColuna, totalNumeros);
-
-        for(let j=startIdx; j<endIdx; j++){
-            const btn=document.createElement('button');
-            btn.textContent=currentTabuleiro.numeros[j].valor;
-            btn.addEventListener('click',markNumber);
-
-            // Ajustar o tamanho do botão com base no número de dígitos
-            const numDigits = btn.textContent.length;
-            if (numDigits > 2) {
-                btn.style.fontSize = '0.9rem'; // Fonte menor para números de 3 dígitos
-                btn.style.lineHeight = '0.9'; // Reduzir espaçamento entre linhas
-            } else if (numDigits == 2) {
-                btn.style.fontSize = '1rem'; // Tamanho médio para números de 2 dígitos
-            } else {
-                btn.style.fontSize = '1.1rem'; // Tamanho maior para números de 1 dígito
-            }
-
-            col.appendChild(btn);
+        // Ajustar o tamanho do botão com base no número de dígitos
+        const numDigits = btn.textContent.length;
+        if (numDigits > 2) {
+            btn.style.fontSize = '0.9rem'; // Fonte menor para números de 3 dígitos
+            btn.style.lineHeight = '0.9'; // Reduzir espaçamento entre linhas
+        } else if (numDigits == 2) {
+            btn.style.fontSize = '1rem'; // Tamanho médio para números de 2 dígitos
+        } else {
+            btn.style.fontSize = '1.1rem'; // Tamanho maior para números de 1 dígito
         }
 
-        // Se esta coluna tiver menos números que as outras, adicionar espaços vazios
-        // para manter o alinhamento
-        const numerosFaltantes = numerosPerColuna - (endIdx - startIdx);
-        for (let k=0; k<numerosFaltantes; k++) {
-            const spacer = document.createElement('div');
-            spacer.style.height = '70px'; // Altura ajustada para 6x6
-            spacer.style.visibility = 'hidden'; // Invisível mas ocupa espaço
-            col.appendChild(spacer);
-        }
-
-        board.appendChild(col);
+        board.appendChild(btn);
     }
 }
 
@@ -2237,47 +2208,7 @@ function showAlert(message, duration = 3000) {
     }, duration);
 }
 
-// Função para mostrar o tutorial
-function showTutorial() {
-  // Conteúdo do tutorial
-  const tutorialContent = `
-    <h2><i class="fas fa-graduation-cap"></i> Como Jogar</h2>
 
-    <h3>Entendendo as Pistas</h3>
-    <p>Cada pista pode ser VERDADEIRA ou FALSA, indicado pelo ícone colorido.</p>
-
-    <div style="display: flex; align-items: center; margin: 15px 0; background-color: var(--true-color); padding: 10px; border-radius: 5px;">
-      <i class="fas fa-check-circle" style="color: #FFFFFF; margin-right: 10px;"></i>
-      <span style="color: #FFFFFF; font-weight: bold;">VERDADEIRA</span>
-    </div>
-    <p>Se a pista for VERDADEIRA, você deve eliminar os números que NÃO SE ENCAIXAM na descrição.</p>
-    <p>Exemplo: Se a pista for "O número é par" e for VERDADEIRA, você deve marcar todos os números ímpares (1, 3, 5, etc.), pois o segredo é par.</p>
-
-    <div style="display: flex; align-items: center; margin: 15px 0; background-color: var(--false-color); padding: 10px; border-radius: 5px;">
-      <i class="fas fa-times-circle" style="color: #FFFFFF; margin-right: 10px;"></i>
-      <span style="color: #FFFFFF; font-weight: bold;">FALSA</span>
-    </div>
-    <p>Se a pista for FALSA, você deve eliminar os números que SE ENCAIXAM na descrição.</p>
-    <p>Exemplo: Se a pista for "O número é par" e for FALSA, você deve marcar todos os números pares (2, 4, 6, etc.), pois o segredo é ímpar.</p>
-
-    <h3>Objetivo do Jogo</h3>
-    <p>Após aplicar todas as 7 pistas, restarão apenas 2 números. Use as dicas finais para descobrir qual é o número secreto.</p>
-  `;
-
-  // Mostrar o modal com o conteúdo do tutorial
-  showCustomModal(tutorialContent);
-
-  // Marcar que o tutorial foi mostrado
-  tutorialShown = true;
-
-  // Esconder o botão de tutorial
-  document.getElementById('show-tutorial-btn').style.display = 'none';
-}
-
-// Função para fechar o tutorial
-function closeTutorial() {
-  document.getElementById('tutorial-container').style.display = 'none';
-}
 
 // Função para mostrar um modal personalizado
 function showCustomModal(content) {
@@ -2324,51 +2255,3 @@ function showCustomModal(content) {
   });
 }
 
-// Função para alternar o modo de alto contraste
-function toggleHighContrast() {
-  highContrastMode = !highContrastMode;
-
-  if (highContrastMode) {
-    // Ativar modo de alto contraste
-    document.body.classList.add('high-contrast');
-
-    // Atualizar o texto do botão
-    const toggleBtn = document.getElementById('toggle-contrast-btn');
-    if (toggleBtn) {
-      toggleBtn.innerHTML = '<i class="fas fa-universal-access"></i><span>Contraste Normal</span>';
-      toggleBtn.style.backgroundColor = '#FFFFFF';
-    }
-
-    // Mostrar mensagem de confirmação
-    const alert = document.getElementById('alert');
-    if (alert) {
-      alert.textContent = "Modo de alto contraste ativado";
-      alert.classList.add('animate__fadeIn');
-      setTimeout(() => {
-        alert.classList.remove('animate__fadeIn');
-        alert.textContent = "";
-      }, 2000);
-    }
-  } else {
-    // Desativar modo de alto contraste
-    document.body.classList.remove('high-contrast');
-
-    // Atualizar o texto do botão
-    const toggleBtn = document.getElementById('toggle-contrast-btn');
-    if (toggleBtn) {
-      toggleBtn.innerHTML = '<i class="fas fa-universal-access"></i><span>Alto Contraste</span>';
-      toggleBtn.style.backgroundColor = 'var(--retro-yellow)';
-    }
-
-    // Mostrar mensagem de confirmação
-    const alert = document.getElementById('alert');
-    if (alert) {
-      alert.textContent = "Modo de contraste normal ativado";
-      alert.classList.add('animate__fadeIn');
-      setTimeout(() => {
-        alert.classList.remove('animate__fadeIn');
-        alert.textContent = "";
-      }, 2000);
-    }
-  }
-}

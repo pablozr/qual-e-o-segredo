@@ -60,11 +60,14 @@
     <title>Código Quântico - Missão Cumprida</title>
 </head>
 <body>
-    <div id="particles-js"></div>
+
 
     <div class="container animate__animated animate__fadeIn">
         <div class="victory-card">
-            <h1 class="animate__animated animate__bounceIn"><i class="fas fa-robot"></i> ENIGMA DESATIVADO!</h1>
+            <div class="game-logo">
+                <img src="assets/images/cubo_11.jpg" alt="Logo do Jogo" class="logo-image animate__animated animate__bounceIn">
+            </div>
+            <h1 class="animate__animated animate__bounceIn animate__delay-1s"><i class="fas fa-robot"></i> ENIGMA DESATIVADO!</h1>
 
             <div class="fireworks-container">
                 <img src="https://cliply.co/wp-content/uploads/2021/09/CLIPLY_372109170_FREE_FIREWORKS_400.gif" alt="Fogos" class="fireworks">
@@ -92,82 +95,7 @@
         </div>
     </div>
 
-    <!-- Particles.js -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <!-- Confetti.js -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            particlesJS("particles-js", {
-                "particles": {
-                    "number": {
-                        "value": 50,
-                        "density": {
-                            "enable": true,
-                            "value_area": 800
-                        }
-                    },
-                    "color": {
-                        "value": ["#ff7f50", "#4169e1", "#32cd32", "#9932cc", "#ff69b4", "#ffd700", "#00ffff"]
-                    },
-                    "shape": {
-                        "type": ["square", "triangle"],
-                        "stroke": {
-                            "width": 2,
-                            "color": "#ffffff"
-                        },
-                    },
-                    "opacity": {
-                        "value": 0.8,
-                        "random": true,
-                    },
-                    "size": {
-                        "value": 6,
-                        "random": true,
-                    },
-                    "line_linked": {
-                        "enable": true,
-                        "distance": 150,
-                        "color": "#ffffff",
-                        "opacity": 0.4,
-                        "width": 2
-                    },
-                    "move": {
-                        "enable": true,
-                        "speed": 3,
-                        "direction": "none",
-                        "random": true,
-                        "straight": false,
-                        "out_mode": "bounce",
-                        "bounce": true,
-                    }
-                },
-                "interactivity": {
-                    "detect_on": "canvas",
-                    "events": {
-                        "onhover": {
-                            "enable": true,
-                            "mode": "repulse"
-                        },
-                        "onclick": {
-                            "enable": true,
-                            "mode": "push"
-                        },
-                        "resize": true
-                    },
-                    "modes": {
-                        "repulse": {
-                            "distance": 100,
-                            "duration": 0.4
-                        },
-                        "push": {
-                            "particles_nb": 4
-                        },
-                    }
-                },
-                "retina_detect": true
-            });
-        });
-    </script>
 </body>
 </html>

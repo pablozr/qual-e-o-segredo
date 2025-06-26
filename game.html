@@ -23,6 +23,9 @@
     <!-- Modal para inserir o nome do jogador -->
     <div id="player-name-modal" class="modal">
         <div class="modal-content">
+            <div class="game-logo">
+                <img src="assets/images/cubo_11.jpg" alt="Logo do Jogo" class="logo-image animate__animated animate__bounceIn">
+            </div>
             <h2><i class="fas fa-id-badge"></i> Identificação do Funcionário</h2>
             <div class="input-group">
                 <input type="text" id="player-name-input" class="modern-input" placeholder="Digite seu nome de usuário" maxlength="50">
@@ -48,6 +51,9 @@
     <div class="game-container">
         <div class="header">
             <div class="header-left">
+                <div class="game-logo-header">
+                    <img src="assets/images/cubo_11.jpg" alt="Logo do Jogo" class="logo-image-small">
+                </div>
                 <div class="timer-container">
                     <i class="fas fa-clock"></i>
                     <p id="timer" class="animate__animated animate__fadeIn">00:00</p>
@@ -91,6 +97,9 @@
 
 
         <div id="end-game" class="end-game hidden animate__animated animate__fadeIn">
+            <div class="game-logo">
+                <img src="assets/images/cubo_11.jpg" alt="Logo do Jogo" class="logo-image animate__animated animate__bounceIn">
+            </div>
             <h2><i class="fas fa-lock"></i> Código de Segurança</h2>
 
             <p class="remaining-title"><i class="fas fa-shield-alt"></i> Números Candidatos <i class="fas fa-shield-alt"></i></p>
@@ -111,99 +120,8 @@
         </div>
     </div>
 
-    <!-- Tutorial Container -->
-    <div id="tutorial-container" class="tutorial-container">
-        <h3><i class="fas fa-graduation-cap"></i> Tutorial</h3>
-        <p>Bem-vindo ao jogo! Aprenda como identificar pistas verdadeiras e falsas.</p>
-        <button id="show-tutorial-btn" onclick="showTutorial()">Ver Tutorial</button>
-        <button id="close-tutorial-btn" onclick="closeTutorial()">Fechar</button>
-    </div>
 
-    <!-- Botão de Acessibilidade -->
-    <div id="accessibility-container" style="position: fixed; top: 20px; right: 20px; z-index: 999; background-color: var(--retro-purple); padding: 10px; border: 3px solid var(--text-light); box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.7);">
-        <button id="toggle-contrast-btn" onclick="toggleHighContrast()" style="background-color: var(--retro-yellow); color: var(--text-dark); border: 2px solid var(--text-dark); padding: 8px; font-family: 'Press Start 2P', cursive; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 5px;">
-            <i class="fas fa-universal-access"></i>
-            <span>Alto Contraste</span>
-        </button>
-    </div>
 
-    <!-- Partículas de fundo -->
-    <div id="particles-js"></div>
 
-    <!-- Particles.js -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            particlesJS("particles-js", {
-                "particles": {
-                    "number": {
-                        "value": 50,
-                        "density": {
-                            "enable": true,
-                            "value_area": 800
-                        }
-                    },
-                    "color": {
-                        "value": ["#ff7f50", "#4169e1", "#32cd32", "#9932cc", "#ff69b4", "#ffd700", "#00ffff"]
-                    },
-                    "shape": {
-                        "type": ["square", "triangle"],
-                        "stroke": {
-                            "width": 2,
-                            "color": "#ffffff"
-                        },
-                    },
-                    "opacity": {
-                        "value": 0.8,
-                        "random": true,
-                    },
-                    "size": {
-                        "value": 6,
-                        "random": true,
-                    },
-                    "line_linked": {
-                        "enable": true,
-                        "distance": 150,
-                        "color": "#ffffff",
-                        "opacity": 0.4,
-                        "width": 2
-                    },
-                    "move": {
-                        "enable": true,
-                        "speed": 3,
-                        "direction": "none",
-                        "random": true,
-                        "straight": false,
-                        "out_mode": "bounce",
-                        "bounce": true,
-                    }
-                },
-                "interactivity": {
-                    "detect_on": "canvas",
-                    "events": {
-                        "onhover": {
-                            "enable": true,
-                            "mode": "repulse"
-                        },
-                        "onclick": {
-                            "enable": true,
-                            "mode": "push"
-                        },
-                        "resize": true
-                    },
-                    "modes": {
-                        "repulse": {
-                            "distance": 100,
-                            "duration": 0.4
-                        },
-                        "push": {
-                            "particles_nb": 4
-                        },
-                    }
-                },
-                "retina_detect": true
-            });
-        });
-    </script>
 </body>
 </html>
