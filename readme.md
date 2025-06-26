@@ -102,8 +102,9 @@ ADD COLUMN player_name TEXT DEFAULT 'Anônimo';
 
 ### Configurações Incluídas
 
-- **vercel.json**: Configurado para servir `index.html` como página inicial
+- **vercel.json**: Configurado com `outputDirectory: "public"` e rewrite para servir `index.html` como página inicial
 - **package.json**: Metadados do projeto
+- **public/**: Diretório de saída contendo todos os arquivos do site (HTML, CSS, JS, imagens)
 - **Cache headers**: Otimização de performance para assets estáticos
 
 ### Atualizações Futuras
