@@ -58,3 +58,65 @@ SUPABASE_KEY=sua-chave-anon-do-supabase
 ALTER TABLE game_stats
 ADD COLUMN player_name TEXT DEFAULT 'Anônimo';
 ```
+
+## Deploy na Vercel
+
+### Pré-requisitos
+- Conta no GitHub
+- Conta na Vercel
+
+### Passos para Deploy
+
+1. **Faça push do código para o GitHub:**
+   ```bash
+   git add .
+   git commit -m "Preparar para deploy na Vercel"
+   git push origin main
+   ```
+
+2. **Acesse a Vercel:**
+   - Vá para [vercel.com](https://vercel.com)
+   - Faça login com sua conta GitHub
+
+3. **Importe o projeto:**
+   - Clique em "New Project"
+   - Selecione seu repositório "qual-e-o-segredo"
+   - Clique em "Import"
+
+4. **Configuração automática:**
+   - A Vercel detectará automaticamente que é um site estático
+   - O arquivo `vercel.json` já está configurado para servir o `index.html` como página inicial
+   - Clique em "Deploy"
+
+5. **Configurar variáveis de ambiente (importante para o Supabase):**
+   - Na página do projeto na Vercel, vá em "Settings" > "Environment Variables"
+   - Adicione as seguintes variáveis:
+     - `SUPABASE_URL`: sua URL do Supabase
+     - `SUPABASE_KEY`: sua chave anônima do Supabase
+
+6. **Acesso:**
+   - Após o deploy, você receberá uma URL como: `https://qual-e-o-segredo.vercel.app`
+   - O jogo estará acessível diretamente nesta URL
+
+### Configurações Incluídas
+
+- **vercel.json**: Configurado para servir `index.html` como página inicial
+- **package.json**: Metadados do projeto
+- **Cache headers**: Otimização de performance para assets estáticos
+
+### Atualizações Futuras
+
+Para atualizar o jogo:
+1. Faça suas alterações no código
+2. Commit e push para o GitHub
+3. A Vercel fará o deploy automático das mudanças
+
+### Tecnologias Utilizadas
+
+- HTML5
+- CSS3 (com animações)
+- JavaScript (ES6+)
+- Font Awesome (ícones)
+- Google Fonts
+- Animate.css
+- Supabase (banco de dados)

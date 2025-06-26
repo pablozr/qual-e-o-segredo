@@ -1,0 +1,23 @@
+{
+  "name": "qual-e-o-segredo",
+  "version": "1.0.0",
+  "description": "Jogo de Segurança Bancária - Operação Matemática",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'No build step required for static site'",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "game",
+    "math",
+    "security",
+    "banking",
+    "education"
+  ],
+  "author": "Pablo",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}
