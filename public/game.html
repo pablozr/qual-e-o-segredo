@@ -20,6 +20,12 @@
     <title>Segurança Bancária - Sistema de Proteção</title>
 </head>
 <body>
+    <!-- Elemento de áudio para música de fundo -->
+    <audio id="background-music" loop preload="auto" volume="0.5">
+        <source src="WhatsApp-Audio-2025-06-26-at-12.55.06.mp3" type="audio/mpeg">
+        Seu navegador não suporta o elemento de áudio.
+    </audio>
+
     <!-- Modal para inserir o nome do jogador -->
     <div id="player-name-modal" class="modal">
         <div class="modal-content">
@@ -75,6 +81,18 @@
             </div>
 
             <div class="header-right">
+                <!-- Controles de áudio -->
+                <div class="audio-controls">
+                    <button id="mute-btn" class="audio-btn" onclick="toggleMute()" title="Mutar/Desmutar">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    <div class="volume-control">
+                        <i class="fas fa-volume-down volume-icon"></i>
+                        <input type="range" id="volume-slider" min="0" max="100" value="50" class="volume-slider" oninput="changeVolume(this.value)">
+                        <i class="fas fa-volume-up volume-icon"></i>
+                    </div>
+                </div>
+                
                 <button class="btn next-btn animate__animated animate__pulse animate__infinite" onclick="nextRound()">
                     <span>Próxima Pista</span>
                     <i class="fas fa-arrow-right"></i>

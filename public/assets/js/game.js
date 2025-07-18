@@ -1108,6 +1108,18 @@ async function startGameWithPlayerName() {
         return;
     }
 
+    // Inicializar áudio quando o usuário interagir
+    if (!backgroundMusic) {
+        initializeAudio();
+    }
+    
+    // Tentar reproduzir a música quando o jogo começar
+    if (backgroundMusic) {
+        backgroundMusic.play().catch(error => {
+            console.log('Autoplay bloqueado, música será iniciada após interação:', error);
+        });
+    }
+
     // Esconder o modal de nome
     document.getElementById('player-name-modal').style.display = 'none';
 
@@ -2254,4 +2266,200 @@ function showCustomModal(content) {
     }
   });
 }
+
+// ===== CONTROLES DE ÁUDIO =====
+
+// Variáveis para controle do áudio
+let backgroundMusic = null;
+let isMuted = false;
+let lastVolume = 50; // Volume inicial
+
+// Função para inicializar o áudio
+function initializeAudio() {
+    backgroundMusic = document.getElementById('background-music');
+    
+    if (backgroundMusic) {
+        // Configurar volume inicial
+        backgroundMusic.volume = 0.5;
+        
+        // Tentar reproduzir automaticamente
+        const playPromise = backgroundMusic.play();
+        
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                console.log('Música de fundo iniciada automaticamente');
+            }).catch(error => {
+                console.log('Autoplay bloqueado pelo navegador:', error);
+                // Mostrar um indicador visual que o áudio está disponível
+                showAudioNotification();
+            });
+        }
+        
+        // Configurar eventos de áudio
+        backgroundMusic.addEventListener('ended', function() {
+            // Reiniciar a música quando terminar (fallback caso loop não funcione)
+            backgroundMusic.currentTime = 0;
+            backgroundMusic.play();
+        });
+        
+        backgroundMusic.addEventListener('error', function(e) {
+            console.error('Erro ao carregar música de fundo:', e);
+            // Ocultar controles se houver erro
+            const audioControls = document.querySelector('.audio-controls');
+            if (audioControls) {
+                audioControls.style.display = 'none';
+            }
+        });
+    }
+}
+
+// Função para mostrar notificação sobre áudio disponível
+function showAudioNotification() {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--retro-cyan);
+        color: var(--text-dark);
+        padding: 15px 20px;
+        border: 3px solid var(--text-dark);
+        border-radius: 0;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 1.2rem;
+        z-index: 10000;
+        cursor: pointer;
+        box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+        animation: pulse 2s infinite;
+    `;
+    notification.innerHTML = '🎵 Clique para ativar música';
+    
+    notification.onclick = function() {
+        if (backgroundMusic) {
+            backgroundMusic.play().then(() => {
+                notification.remove();
+            }).catch(error => {
+                console.error('Erro ao reproduzir música:', error);
+            });
+        }
+    };
+    
+    document.body.appendChild(notification);
+    
+    // Remover automaticamente após 10 segundos
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 10000);
+}
+
+// Função para alternar mute/unmute
+function toggleMute() {
+    if (!backgroundMusic) return;
+    
+    const muteBtn = document.getElementById('mute-btn');
+    const muteIcon = muteBtn.querySelector('i');
+    
+    if (isMuted) {
+        // Desmutar
+        backgroundMusic.volume = lastVolume / 100;
+        backgroundMusic.muted = false;
+        isMuted = false;
+        
+        muteBtn.classList.remove('muted');
+        muteIcon.className = 'fas fa-volume-up';
+        muteBtn.title = 'Mutar';
+        
+        // Atualizar slider
+        const volumeSlider = document.getElementById('volume-slider');
+        volumeSlider.value = lastVolume;
+    } else {
+        // Mutar
+        lastVolume = backgroundMusic.volume * 100;
+        backgroundMusic.volume = 0;
+        backgroundMusic.muted = true;
+        isMuted = true;
+        
+        muteBtn.classList.add('muted');
+        muteIcon.className = 'fas fa-volume-mute';
+        muteBtn.title = 'Desmutar';
+        
+        // Atualizar slider para 0
+        const volumeSlider = document.getElementById('volume-slider');
+        volumeSlider.value = 0;
+    }
+}
+
+// Função para alterar o volume
+function changeVolume(value) {
+    if (!backgroundMusic) return;
+    
+    const volume = parseInt(value);
+    const muteBtn = document.getElementById('mute-btn');
+    const muteIcon = muteBtn.querySelector('i');
+    
+    if (volume === 0) {
+        // Volume 0 = mute
+        backgroundMusic.volume = 0;
+        backgroundMusic.muted = true;
+        isMuted = true;
+        
+        muteBtn.classList.add('muted');
+        muteIcon.className = 'fas fa-volume-mute';
+        muteBtn.title = 'Desmutar';
+    } else {
+        // Volume > 0
+        backgroundMusic.volume = volume / 100;
+        backgroundMusic.muted = false;
+        isMuted = false;
+        lastVolume = volume;
+        
+        muteBtn.classList.remove('muted');
+        
+        // Alterar ícone baseado no volume
+        if (volume < 30) {
+            muteIcon.className = 'fas fa-volume-down';
+        } else if (volume < 70) {
+            muteIcon.className = 'fas fa-volume-up';
+        } else {
+            muteIcon.className = 'fas fa-volume-up';
+        }
+        
+        muteBtn.title = 'Mutar';
+    }
+}
+
+// Função para pausar música (usada quando o jogo termina, se necessário)
+function pauseMusic() {
+    if (backgroundMusic && !backgroundMusic.paused) {
+        backgroundMusic.pause();
+    }
+}
+
+// Função para resumir música
+function resumeMusic() {
+    if (backgroundMusic && backgroundMusic.paused) {
+        backgroundMusic.play().catch(error => {
+            console.error('Erro ao resumir música:', error);
+        });
+    }
+}
+
+// Adicionar controle de visibilidade da página para pausar/resumir música
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+        // Página não está visível - pausar música se preferir
+        // pauseMusic();
+    } else {
+        // Página está visível - resumir música se preferir
+        // resumeMusic();
+    }
+});
+
+// Inicializar áudio quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', function() {
+    // Aguardar um pouco para garantir que todos os elementos estejam carregados
+    setTimeout(initializeAudio, 500);
+});
 

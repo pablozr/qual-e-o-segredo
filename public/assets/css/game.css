@@ -1499,117 +1499,357 @@ body::after {
 
     /* Ajusta o tamanho do círculo para telas menores */
     button.marked::after {
-        width: 90%;
-        height: 90%;
+        width: 80%;
+        height: 80%;
     }
-}
 
-@media (max-width: 768px) {
+    .header {
+        padding: 15px;
+    }
+
+    .header-left, .header-center, .header-right {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .timer-container {
+        padding: 8px 15px;
+    }
+
+    #timer {
+        font-size: 1.8rem;
+    }
+
     .rule-container {
-        padding: 12px 15px;
+        padding: 12px 20px;
+        max-width: 100%;
     }
 
     #rule {
         font-size: 1.3rem;
-        line-height: 1.8;
+    }
+
+    .next-btn {
+        font-size: 1.2rem;
+        padding: 15px 25px;
+        min-width: 280px;
+    }
+
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+
+    .modal-content h2 {
+        font-size: 2rem;
+    }
+
+    .modal-content p {
+        font-size: 1.4rem;
+    }
+
+    .confirm-btn {
+        font-size: 1.4rem;
+        padding: 15px 25px;
+    }
+
+    .end-game {
+        width: 95%;
+        padding: 20px;
+        max-height: 90vh;
     }
 
     .remaining-number {
-        width: 100px;
-        height: 100px;
-        font-size: 2.2rem;
+        width: 80px;
+        height: 80px;
+        font-size: 2rem;
     }
 
     .final-hints p {
         font-size: 1.3rem;
+        padding: 10px 15px;
     }
 }
 
 @media (max-width: 480px) {
-    .header {
-        padding: 15px 10px;
-    }
-
-    .timer-container, .rule-container {
-        padding: 10px;
-    }
-
-    #timer {
-        font-size: 1.6rem;
-    }
-
-    .next-btn {
-        padding: 15px 25px;
-        font-size: 1.1rem;
-        min-width: 280px;
-        gap: 8px;
-    }
-
     .board {
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
-        padding: 15px;
-        max-width: 320px; /* Reduz a largura máxima para telas muito pequenas */
-        margin: 0 auto; /* Mantém centralizado */
+        max-width: 400px; /* Reduz ainda mais para telas muito pequenas */
+        padding: 15px; /* Reduz o padding */
     }
-
-    /* Removido .column - usando CSS Grid */
 
     button {
         width: 60px;
         height: 60px;
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         min-width: 60px; /* Garante largura mínima consistente */
     }
 
     /* Ajusta o tamanho do X para telas muito pequenas */
     button.marked::before {
         font-size: 3rem;
-        line-height: 0.7;
     }
 
-    /* Ajusta o tamanho do círculo para telas muito pequenas */
-    button.marked::after {
-        width: 95%;
-        height: 95%;
-    }
-}
-
-@media (max-width: 480px) {
-    .final-step, .end-game {
-        padding: 20px;
+    #timer {
+        font-size: 1.5rem;
     }
 
-    h2 {
+    #rule {
+        font-size: 1.1rem;
+    }
+
+    .next-btn {
+        font-size: 1rem;
+        padding: 12px 20px;
+        min-width: 240px;
+    }
+
+    .modal-content h2 {
         font-size: 1.8rem;
     }
 
-    label {
+    .modal-content p {
         font-size: 1.2rem;
     }
 
-    .modern-input {
-        padding: 15px;
-        font-size: 1.6rem;
-    }
-
     .confirm-btn {
-        padding: 15px 25px;
-        font-size: 1.4rem;
+        font-size: 1.2rem;
+        padding: 12px 20px;
     }
 
     .remaining-number {
-        width: 80px;
-        height: 80px;
-        font-size: 1.8rem;
-    }
-
-    .remaining-title {
-        font-size: 1.4rem;
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
     }
 
     .final-hints p {
         font-size: 1.1rem;
-        padding: 12px;
+        padding: 8px 12px;
+    }
+}
+
+/* Controles de Áudio */
+.audio-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-right: 20px;
+    padding: 10px;
+    background: var(--retro-cyan);
+    border: 3px solid var(--text-light);
+    border-radius: 0;
+    box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.audio-controls::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.1),
+        rgba(0, 0, 0, 0.1) 3px,
+        transparent 3px,
+        transparent 6px
+    );
+    pointer-events: none;
+}
+
+.audio-btn {
+    width: 50px;
+    height: 50px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.5rem;
+    background: var(--retro-yellow);
+    color: var(--text-dark);
+    border: 3px solid var(--text-dark);
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1;
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.audio-btn:hover {
+    background: var(--accent-color);
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+.audio-btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0.5);
+}
+
+.audio-btn:focus {
+    outline: 3px solid var(--focus-outline);
+    outline-offset: 2px;
+    position: relative;
+    z-index: 2;
+}
+
+.audio-btn.muted {
+    background: var(--error-color);
+    color: var(--text-light);
+}
+
+.audio-btn.muted:hover {
+    background: #cc0000;
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    z-index: 1;
+}
+
+.volume-icon {
+    font-size: 1.2rem;
+    color: var(--text-dark);
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.volume-slider {
+    width: 100px;
+    height: 8px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--text-dark);
+    border: 2px solid var(--text-light);
+    border-radius: 0;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--retro-pink);
+    border: 2px solid var(--text-dark);
+    border-radius: 0;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--retro-pink);
+    border: 2px solid var(--text-dark);
+    border-radius: 0;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+}
+
+.volume-slider:focus {
+    outline: 2px solid var(--focus-outline);
+    outline-offset: 2px;
+}
+
+.volume-slider:hover::-webkit-slider-thumb {
+    background: var(--retro-yellow);
+}
+
+.volume-slider:hover::-moz-range-thumb {
+    background: var(--retro-yellow);
+}
+
+/* Responsividade para controles de áudio */
+@media (max-width: 1024px) {
+    .audio-controls {
+        flex-direction: column;
+        gap: 10px;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .volume-control {
+        flex-direction: row;
+        gap: 5px;
+    }
+
+    .volume-slider {
+        width: 80px;
+    }
+}
+
+@media (max-width: 768px) {
+    .audio-controls {
+        padding: 8px;
+        gap: 8px;
+    }
+
+    .audio-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .volume-slider {
+        width: 60px;
+        height: 6px;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+        width: 16px;
+        height: 16px;
+    }
+
+    .volume-slider::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+    }
+
+    .volume-icon {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .audio-controls {
+        padding: 6px;
+        gap: 6px;
+    }
+
+    .audio-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+
+    .volume-slider {
+        width: 50px;
+        height: 5px;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+        width: 14px;
+        height: 14px;
+    }
+
+    .volume-slider::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+    }
+
+    .volume-icon {
+        font-size: 0.9rem;
     }
 }
