@@ -1206,14 +1206,14 @@ async function initializeGame() {
 
         // Melhorar o feedback visual para pistas verdadeiras/falsas usando variáveis CSS
         const detetiveIcon = regra.isTrue ?
-            `<div style="display: inline-flex; align-items: center; background-color: var(--true-color); padding: 5px 10px; border-radius: 5px; margin-right: 10px; border: 2px solid #FFFFFF;">
-                <i class="fas fa-check-circle" style="color: #FFFFFF; margin-right: 5px;"></i>
-                <span style="color: #FFFFFF; font-weight: bold; text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);">VERDADEIRA</span>
-            </div> ` :
-            `<div style="display: inline-flex; align-items: center; background-color: var(--false-color); padding: 5px 10px; border-radius: 5px; margin-right: 10px; border: 2px solid #FFFFFF;">
-                <i class="fas fa-times-circle" style="color: #FFFFFF; margin-right: 5px;"></i>
-                <span style="color: #FFFFFF; font-weight: bold; text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);">FALSA</span>
-            </div> `;
+            `<div class="rule-badge" style="display:inline-flex;align-items:center;background-color:var(--true-color);padding:5px 10px;border-radius:5px;margin-right:10px;border:2px solid #FFFFFF;">
+                <i class="fas fa-check-circle" style="color:#FFFFFF;margin-right:5px;"></i>
+                <span style="color:#FFFFFF;font-weight:bold;text-shadow:1px 1px 0 rgba(0,0,0,0.5);">VERDADEIRA</span>
+            </div>` :
+            `<div class="rule-badge" style="display:inline-flex;align-items:center;background-color:var(--false-color);padding:5px 10px;border-radius:5px;margin-right:10px;border:2px solid #FFFFFF;">
+                <i class="fas fa-times-circle" style="color:#FFFFFF;margin-right:5px;"></i>
+                <span style="color:#FFFFFF;font-weight:bold;text-shadow:1px 1px 0 rgba(0,0,0,0.5);">FALSA</span>
+            </div>`;
 
         const regraElement = document.getElementById('rule');
         regraElement.innerHTML = detetiveIcon + regra.texto;
@@ -1723,8 +1723,14 @@ function avancarParaProximaPistaValida() {
 
             // Sempre usar texto branco para garantir legibilidade
             const detetiveIcon = regra.isTrue ?
-                `<i class="fas fa-user-secret" style="color: #00FF00;"></i> <span style="color: #FFFFFF; font-weight: bold; text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);">VERDADEIRA:</span> ` :
-                `<i class="fas fa-user-secret" style="color: #FF0000;"></i> <span style="color: #FFFFFF; font-weight: bold; text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);">FALSA:</span> `;
+                `<div class="rule-badge" style="display:inline-flex;align-items:center;background-color:var(--true-color);padding:5px 10px;border-radius:5px;margin-right:10px;border:2px solid #FFFFFF;">
+                    <i class="fas fa-check-circle" style="color:#FFFFFF;margin-right:5px;"></i>
+                    <span style="color:#FFFFFF;font-weight:bold;text-shadow:1px 1px 0 rgba(0,0,0,0.5);">VERDADEIRA</span>
+                </div>` :
+                `<div class="rule-badge" style="display:inline-flex;align-items:center;background-color:var(--false-color);padding:5px 10px;border-radius:5px;margin-right:10px;border:2px solid #FFFFFF;">
+                    <i class="fas fa-times-circle" style="color:#FFFFFF;margin-right:5px;"></i>
+                    <span style="color:#FFFFFF;font-weight:bold;text-shadow:1px 1px 0 rgba(0,0,0,0.5);">FALSA</span>
+                </div>`;
 
             regraElement.innerHTML = detetiveIcon + regra.texto;
 

@@ -234,7 +234,7 @@ body::after {
 
 .rule-container {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 15px;
     /* O background será definido dinamicamente pelo JavaScript */
     padding: 15px 25px;
@@ -243,7 +243,8 @@ body::after {
     box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.5);
     max-width: 600px;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
+    flex-wrap: wrap;
 }
 
 .rule-container::after {
@@ -279,6 +280,17 @@ body::after {
     text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.7); /* Sombra mais escura para melhor contraste */
     z-index: 1;
     letter-spacing: 0.5px; /* Melhorar legibilidade */
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Badge da veracidade da pista (injetado por JS) */
+.rule-badge {
+    display: block;
+    margin-bottom: 8px;
+    max-width: 100%;
+    white-space: nowrap;
 }
 
 .next-btn {
@@ -467,7 +479,7 @@ body::after {
 
 .board {
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 15px;
     padding: 30px;
     background: var(--retro-purple);
@@ -521,6 +533,16 @@ body::after {
 }
 
 /* Removido .column pois agora usamos CSS Grid diretamente */
+
+/* Botões do tabuleiro responsivos (apenas dentro do .board) */
+.board button {
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    font-size: clamp(0.9rem, 2.5vw, 1.5rem);
+    line-height: 1.1;
+}
 
 button {
     width: 90px; /* Aumentado para acomodar melhor os números */
@@ -826,6 +848,7 @@ button.blocked::before {
 .tooltip .tooltip-text {
     visibility: hidden;
     width: 350px;
+    max-width: calc(100vw - 40px);
     background-color: var(--retro-purple);
     color: var(--text-light);
     text-align: center;
@@ -1313,6 +1336,8 @@ label i {
     box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
     position: relative;
     z-index: 1;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 /* Estilo para os números restantes */
@@ -1324,6 +1349,7 @@ label i {
     width: 100%;
     position: relative;
     z-index: 1;
+    flex-wrap: wrap;
 }
 
 .remaining-number {
@@ -1464,7 +1490,7 @@ body::after {
     }
 
     .board {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         max-width: 800px; /* Reduz a largura máxima para telas menores */
         margin: 0 auto; /* Mantém centralizado */
         justify-content: center; /* Garante que as colunas estejam centralizadas */
@@ -1477,7 +1503,7 @@ body::after {
 
 @media (max-width: 768px) {
     .board {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 12px;
         max-width: 600px; /* Reduz a largura máxima para telas menores */
         padding: 20px; /* Reduz o padding */
@@ -1485,11 +1511,8 @@ body::after {
 
     /* Removido .column - usando CSS Grid */
 
-    button {
-        width: 70px;
-        height: 70px;
-        font-size: 1.3rem;
-        min-width: 70px; /* Garante largura mínima consistente */
+    .board button {
+        font-size: clamp(0.9rem, 3.5vw, 1.3rem);
     }
 
     /* Ajusta o tamanho do X para telas menores */
@@ -1573,17 +1596,14 @@ body::after {
 
 @media (max-width: 480px) {
     .board {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
         max-width: 400px; /* Reduz ainda mais para telas muito pequenas */
         padding: 15px; /* Reduz o padding */
     }
 
-    button {
-        width: 60px;
-        height: 60px;
-        font-size: 1.1rem;
-        min-width: 60px; /* Garante largura mínima consistente */
+    .board button {
+        font-size: clamp(0.85rem, 4vw, 1.1rem);
     }
 
     /* Ajusta o tamanho do X para telas muito pequenas */
