@@ -94,7 +94,7 @@ body::after {
 .header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: stretch;
     padding: 20px;
     margin-bottom: 20px;
     background: var(--retro-purple);
@@ -104,6 +104,7 @@ body::after {
     image-rendering: pixelated;
     position: relative;
     overflow: hidden;
+    gap: 24px;
 }
 
 /* Efeito de scanline para o cabeçalho */
@@ -127,10 +128,22 @@ body::after {
 .header-left, .header-center, .header-right {
     display: flex;
     align-items: center;
+    gap: 16px;
 }
 
 .header-left {
     gap: 15px;
+    flex: 1 1 0;
+}
+
+.header-center {
+    flex: 2 1 0;
+    justify-content: center;
+}
+
+.header-right {
+    flex: 1 1 0;
+    justify-content: flex-end;
 }
 
 /* Logo do jogo */
@@ -245,6 +258,21 @@ body::after {
     position: relative;
     overflow: visible;
     flex-wrap: wrap;
+}
+
+/* Padronização de altura dos boxes do cabeçalho */
+.timer-container,
+.rule-container,
+.audio-controls,
+.next-btn {
+    min-height: 88px;
+}
+
+.timer-container,
+.rule-container,
+.audio-controls {
+    display: flex;
+    align-items: center;
 }
 
 .rule-container::after {
@@ -542,6 +570,7 @@ body::after {
     aspect-ratio: 1 / 1;
     font-size: clamp(0.9rem, 2.5vw, 1.5rem);
     line-height: 1.1;
+    touch-action: manipulation;
 }
 
 button {
@@ -881,7 +910,8 @@ button.blocked::before {
     border-color: var(--text-light) transparent transparent transparent;
 }
 
-.tooltip:hover .tooltip-text {
+.tooltip:hover .tooltip-text,
+.tooltip:focus-within .tooltip-text {
     visibility: visible;
     opacity: 1;
 }
@@ -1558,6 +1588,13 @@ body::after {
         min-width: 280px;
     }
 
+    .timer-container,
+    .rule-container,
+    .audio-controls,
+    .next-btn {
+        min-height: 72px;
+    }
+
     .modal-content {
         width: 95%;
         padding: 20px;
@@ -1604,6 +1641,8 @@ body::after {
 
     .board button {
         font-size: clamp(0.85rem, 4vw, 1.1rem);
+        min-width: 44px;
+        min-height: 44px;
     }
 
     /* Ajusta o tamanho do X para telas muito pequenas */
@@ -1623,6 +1662,13 @@ body::after {
         font-size: 1rem;
         padding: 12px 20px;
         min-width: 240px;
+    }
+
+    .timer-container,
+    .rule-container,
+    .audio-controls,
+    .next-btn {
+        min-height: 64px;
     }
 
     .modal-content h2 {
@@ -1648,6 +1694,29 @@ body::after {
         font-size: 1.1rem;
         padding: 8px 12px;
     }
+
+    /* Reduz animações e decorações pesadas no mobile para performance */
+    .header::before,
+    .board::before,
+    .board::after,
+    .board-container::before,
+    .board-container::after {
+        animation: none !important;
+        background-image: none !important;
+    }
+
+    .pixel-square,
+    .pixel-circle,
+    .pixel-triangle,
+    .pixel-star {
+        display: none;
+    }
+
+    /* Evita zoom automático no iOS ao focar inputs */
+    .modern-input { font-size: 16px; }
+
+    /* Aumenta área de toque dos botões principais */
+    .next-btn { min-height: 44px; }
 }
 
 /* Controles de Áudio */
